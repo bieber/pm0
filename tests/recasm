@@ -1,0 +1,20 @@
+inc 4
+sio
+sto 0 3
+cal 0 countrec
+ret
+countrec:
+inc 3
+lod 1 3
+lit 1
+sub
+sto 1 3
+lod 1 3
+soi
+lod 1 3
+lit 0
+neq
+jpc skipcal
+cal 1 countrec
+skipcal:
+ret

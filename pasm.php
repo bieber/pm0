@@ -26,7 +26,7 @@
         $end = substr($line, strlen($line) - 1, 1);
         if($end == ":")
             $labels[substr($line, 0, strlen($line) -1)] = $pc;
-        else
+        else if($line != '')
             $pc++;
     }
     
@@ -111,7 +111,7 @@
             break;
             
         case 'cal':
-            writeCode($fout, 5, $line[1], $line[2]);
+            writeCode($fout, 5, $line[1], $labels[trim($line[2])]);
             break;
             
         case 'inc':
