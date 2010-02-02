@@ -11,15 +11,8 @@
 //Machine constants
 #define MAX_STACK_HEIGHT 2000
 #define MAX_CODE_LENGTH 500
-#define OVERFLOW  //Allocating a little extra room in arrays to detect overflow
+#define OVERFLOW  2 //Allocating a little extra room in arrays
 #define MAX_LEXI_LEVELS 3
-
-//Instruction definition
-typedef struct instruction{
-  int op;
-  int l;
-  int m;
-} instruction;
 
 //Opcode strings
 char* OPCODES[] =
@@ -51,7 +44,7 @@ int main(int argc, char* argv[]){
   int lineRun;
 
   //Memory
-  int stack[MAX_STACK_HEIGHT + OVERFLOW];
+  int stack[(MAX_STACK_HEIGHT + OVERFLOW)];
   instruction code[MAX_CODE_LENGTH + OVERFLOW];
 
   //Registers
@@ -98,9 +91,9 @@ int main(int argc, char* argv[]){
     //Printing the current status
     if(verbose)
       printState(lineRun, ir, pc, bp, sp, stack);
-
+    
   }
-
+  
   return 0;
 }
 
@@ -116,7 +109,7 @@ void printState(int line, instruction op, int pc, int bp, int sp, int stack[]){
   int i;
   int pipe;
   int level;
-
+  
   //Printing header, if necessary
   if(line <0)
     printf("                 %3s %3s %3s  Stack\n", "pc", "bp", "sp");

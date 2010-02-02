@@ -1,6 +1,7 @@
 #ifndef CODES_H
 #define CODES_H
 
+//Opcodes
 typedef enum{
   LIT = 1,
   OPR = 2,
@@ -14,6 +15,7 @@ typedef enum{
   SIO = 10
 } opcode;
 
+//Operator codes
 typedef enum{
   RET = 0,
   NEG = 1,
@@ -30,5 +32,12 @@ typedef enum{
   GTR = 12,
   GEQ = 13
 } operator;
+
+//Instruction definition
+typedef struct instruction{
+  int op;
+  int l;
+  int m;
+} instruction;
 
 #endif
