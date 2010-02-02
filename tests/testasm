@@ -1,0 +1,4 @@
+inc 3
+lit 5
+not
+ret

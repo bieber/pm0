@@ -9,8 +9,6 @@
 #define USAGE "Usage: machine [-q] infile\n"
 
 //Machine constants
-#define MAX_STACK_HEIGHT 2000
-#define MAX_CODE_LENGTH 500
 #define OVERFLOW  2 //Allocating a little extra room in arrays
 #define MAX_LEXI_LEVELS 3
 
@@ -254,7 +252,7 @@ int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[],
     break;
     
   case JPC:
-    if(stack[(*sp)--])
+    if(!stack[(*sp)--])
       *pc = ir.m;
     break;
     

@@ -1,6 +1,10 @@
 #ifndef CODES_H
 #define CODES_H
 
+//Machine constants
+#define MAX_STACK_HEIGHT 2000
+#define MAX_CODE_LENGTH 500
+
 //Opcodes
 typedef enum{
   LIT = 1,
