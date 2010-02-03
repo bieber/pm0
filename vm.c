@@ -88,6 +88,12 @@ int main(int argc, char* argv[]){
     //Execution cycle
     if(!execOp(&sp, &bp, &pc, ir, code, stack, arlist, &arcntr))
       running = 0;
+    
+    //If the operation resulted in a stack overflow, complain and exit
+    if(sp > MAX_STACK_HEIGHT){
+      printf("STACK OVERFLOW\n");
+      return 1;
+    }
 
     //Printing the current status
     if(verbose)
@@ -311,8 +317,14 @@ int readFile(int argc, char* argv[], int* verbose, instruction code[])
     fscanf(fin, "%d ", &code[pcounter].l);
     fscanf(fin, "%d ", &code[pcounter].m);
     pcounter++;
+
+    //Checking for code overflow
+    if(pcounter >= MAX_CODE_LENGTH){
+      printf("CODE OVERFLOW\n");
+      return -1;
+    }
   }
-  
+
   close(fin);
 
   return pcounter;
