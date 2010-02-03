@@ -6,7 +6,7 @@
 #define MAX(x, y) (x>y?x:y)
 
 //Usage
-#define USAGE "Usage: machine [-q] infile\n"
+#define USAGE "Usage: vm [-q] infile\n"
 
 //Machine constants
 #define OVERFLOW  2 //Allocating a little extra room in arrays
@@ -29,9 +29,10 @@ char* OPCODES[] =
 };
 
 int base(int levels, int bp, int stack[]);
-void printState(int line, instruction op, int pc, int bp, int sp, int stack[]);
+void printState(int line, instruction op, int pc, int bp, int sp, int stack[],
+                int arlist[]);
 int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[], 
-           int stack[]);
+           int stack[], int arlist[], int* arcntr);
 void printFile(instruction code[], int numInstructions);
 int readFile(int argc, char* argv[], int* verbose, instruction code[]);
 
@@ -40,10 +41,12 @@ int main(int argc, char* argv[]){
   int verbose = 1;
   int numInstructions = 0;
   int lineRun;
+  int arcntr = 0;
 
   //Memory
   int stack[(MAX_STACK_HEIGHT + OVERFLOW)];
   instruction code[MAX_CODE_LENGTH + OVERFLOW];
+  int arlist[MAX_STACK_HEIGHT];
 
   //Registers
   int sp=0;
@@ -72,7 +75,7 @@ int main(int argc, char* argv[]){
 
   //Printing the initial state
   if(verbose)
-    printState(-1, ir, pc, bp, sp, stack);
+    printState(-1, ir, pc, bp, sp, stack, arlist);
   
   //Execution loop
   while(running){  
@@ -83,12 +86,12 @@ int main(int argc, char* argv[]){
     ir = code[pc++];
     
     //Execution cycle
-    if(!execOp(&sp, &bp, &pc, ir, code, stack))
+    if(!execOp(&sp, &bp, &pc, ir, code, stack, arlist, &arcntr))
       running = 0;
 
     //Printing the current status
     if(verbose)
-      printState(lineRun, ir, pc, bp, sp, stack);
+      printState(lineRun, ir, pc, bp, sp, stack, arlist);
     
   }
   
@@ -103,13 +106,14 @@ int base(int levels, int bp, int stack[]){
   return bp;
 }
 
-void printState(int line, instruction op, int pc, int bp, int sp, int stack[]){
-  int i;
+void printState(int line, instruction op, int pc, int bp, int sp, int stack[], 
+    int arlist[]){
+  int i, k;
   int pipe;
   int level;
   
   //Printing header, if necessary
-  if(line <0)
+  if(line < 0)
     printf("                 %3s %3s %3s  Stack\n", "pc", "bp", "sp");
 
   //Printing the current line
@@ -122,26 +126,14 @@ void printState(int line, instruction op, int pc, int bp, int sp, int stack[]){
   printf("%3d %3d %3d  ", pc, bp, sp);
 
   //Printing the stack
-  for(i=1; i<=MAX(sp, (bp+2)); i++){
+  for(i=1, k=0; i<=MAX(sp, (bp+2)); i++){
     
     //Determining whether or not to insert a pipe before this element
-    pipe=0;
-    level = 0;
-    while(level >= 0){
-      if(base(level, bp, stack) == 1){
-        break;
-      }else if(base(level, bp, stack) == i){
-        pipe = 1;
-        break;
-      }else if(base(level, bp, stack) < i){
-        break;
-      }else{
-        level++;
-      }
-    }
-
-    if(pipe)
+    if(arlist[k] == i)
+    {
       printf("| ");
+      k++;
+    }
 
     printf("%d ", stack[i]);
   }
@@ -150,7 +142,7 @@ void printState(int line, instruction op, int pc, int bp, int sp, int stack[]){
 }
 
 int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[], 
-           int stack[]){
+           int stack[], int arlist[], int* arcntr){
   //One giant switch statement for all the opcodes
   switch((opcode)ir.op){
   case LIT:
@@ -236,6 +228,7 @@ int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[],
     break;
     
   case CAL:
+    arlist[(*arcntr)++] = *sp + 1;
     stack[*sp + 1] = base(ir.l, *bp, stack);
     stack[*sp + 2] = *bp;
     stack[*sp + 3] = *pc;
