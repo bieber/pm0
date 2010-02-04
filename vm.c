@@ -191,6 +191,10 @@ int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[],
       stack[*sp] = stack[*sp] % 2;
       break;
       
+    case MOD:
+      stack[--(*sp)] = stack[*sp] % stack[(*sp)+1];
+      break;
+    
     case EQL:
       (*sp)--;
       stack[*sp] = stack[*sp] == stack[*sp+1];
@@ -323,7 +327,7 @@ int readFile(int argc, char* argv[], int* verbose, instruction code[])
     }
   }
 
-  close(fin);
+  fclose(fin);
 
   return pcounter;
 }
