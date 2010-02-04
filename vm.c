@@ -115,8 +115,6 @@ int base(int levels, int bp, int stack[]){
 void printState(int line, instruction op, int pc, int bp, int sp, int stack[], 
     int arlist[]){
   int i, k;
-  int pipe;
-  int level;
   
   //Printing header, if necessary
   if(line < 0)
