@@ -192,7 +192,8 @@ int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[],
       break;
       
     case MOD:
-      stack[--(*sp)] = stack[*sp] % stack[(*sp)+1];
+      (*sp)--;
+      stack[*sp] = stack[*sp] % stack[(*sp)+1];
       break;
     
     case EQL:
