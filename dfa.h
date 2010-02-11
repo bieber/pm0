@@ -16,7 +16,7 @@ typedef struct DFA{
 
   //Defines the DFA itself
   int state;  //The machine's current state
-  void (*transition)(struct DFA*, char);  //A pointer to the transition function
+  int (*transition)(struct DFA*, char);  //Transition function table
 
   //Flags
   int halt;  //Machine halts if set to 1

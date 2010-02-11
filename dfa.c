@@ -5,9 +5,10 @@ void runDFA(DFA* machine, FILE* input){
   char inChar;
 
   //Calling the machine's transition function repeatedly
+  inChar = fgetc(input);
   while(!(machine->halt || feof(input))){
+    machine->state = (*(machine->transition))(machine, inChar);
     inChar = fgetc(input);
-    (*(machine->transition))(machine, inChar);
   }
 
   //Moves the file pointer back one character if necessary
@@ -19,7 +20,6 @@ void runDFA(DFA* machine, FILE* input){
 void initDFA(DFA* machine){
 
   machine->state = 0;
-  machine->transition = NULL;
 
   machine->halt = 0;
   machine->accept = 0;

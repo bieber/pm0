@@ -3,23 +3,35 @@
 
 #include "dfa.h"
 
-void transition(DFA* this, char input);
+int transition(DFA* this, char input);
 
 int main(int argc, char* argv[]){
+
+  FILE* fin;
   
   DFA machine;
   initDFA(&machine);
   machine.transition = &transition;
 
+  fin = fopen(argv[1], "r");
+  runDFA(&machine, fin);
+
+  fclose(fin);
+
+  if(machine.accept)
+    printf("String accepted\n");
+  else
+    printf("String rejected\n");
+
   return 0;
 }
 
-void transition(DFA* this, char input){
+int transition(DFA* this, char input){
   
   switch(this->state){
   case 0:  //Start state
     if(input == 'a'){
-      this->state = 1;
+      return 1;
     }else{
       rejectDFA(this);
     }
@@ -27,8 +39,8 @@ void transition(DFA* this, char input){
 
   case 1:  //Recognized an 'a'
     if(input == 'b'){
-      this->state = 2;
       this->accept = 1;
+      return 2;
     }else{
       rejectDFA(this);
     }
@@ -36,8 +48,8 @@ void transition(DFA* this, char input){
 
   case 2: //Recognized a 'b'
     if(input == 'a'){
-      this->state = 1;
       this->accept = 0;
+      return 1;
     }else{
       rejectDFA(this);
     }
@@ -45,5 +57,6 @@ void transition(DFA* this, char input){
     break;
   
   }
-
+  
+  return -1;
 }
