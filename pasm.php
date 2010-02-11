@@ -4,7 +4,7 @@
 
     /*
     WARNING!  This script does effectively zero error checking, and it will do
-    unexpected and horrifying things if you botch it's input (or if I botched
+    unexpected and horrifying things if you botch its input (or if I botched
     its implementation)
     */
 
