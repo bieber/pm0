@@ -2,13 +2,14 @@
 
 void runDFA(DFA* machine, FILE* input){
   
-  char inChar;
+  int inChar;
 
   //Calling the machine's transition function repeatedly
-  inChar = fgetc(input);
-  while(!(machine->halt || feof(input))){
-    machine->state = (*(machine->transition))(machine, inChar);
+  while(!machine->halt){
     inChar = fgetc(input);
+    if(inChar == EOF)
+      break;
+    machine->state = (*(machine->transition))(machine, (char)inChar);
   }
 
   //Moves the file pointer back one character if necessary

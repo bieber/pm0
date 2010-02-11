@@ -11,6 +11,7 @@ int main(int argc, char* argv[]){
   
   DFA machine;
   initDFA(&machine);
+  machine.accept = 1;
   machine.transition = &transition;
 
   fin = fopen(argv[1], "r");
@@ -28,6 +29,8 @@ int main(int argc, char* argv[]){
 
 int transition(DFA* this, char input){
   
+  printf("%d - %d\n", this->state, input);
+
   switch(this->state){
   case 0:  //Start state
     if(input == 'a'){
@@ -50,6 +53,9 @@ int transition(DFA* this, char input){
     if(input == 'a'){
       this->accept = 0;
       return 1;
+    }else if(input == '\n'){
+      this->accept = 1;
+      return 2;
     }else{
       rejectDFA(this);
     }
