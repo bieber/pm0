@@ -10,7 +10,7 @@
 typedef struct{
   int retString;  //True if the machine returns a string
   token numeric;
-  char* string;
+  char string[MAX_IDENT_LENGTH + 2];
 } MachineValue;
 
 //Describes a DFA

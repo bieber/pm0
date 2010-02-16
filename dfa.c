@@ -42,9 +42,3 @@ void rejectDFA(DFA* machine){
   machine->halt = 1;
   machine->accept = 0;
 }
-
-
-int main(void)
-{
-  
-}
