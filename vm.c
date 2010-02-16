@@ -1,3 +1,7 @@
+// Robert Bieber & Paul Gatterdam
+// COP3402 - Virtual Machine
+// 2-5-10
+
 #include <stdio.h>
 #include <string.h>
 #include "codes.h"
