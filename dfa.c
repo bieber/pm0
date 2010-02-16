@@ -1,4 +1,7 @@
 #include "dfa.h"
+#include "codes.h"
+
+#include <string.h>
 
 void runDFA(DFA* machine, FILE* input){
   
@@ -9,6 +12,10 @@ void runDFA(DFA* machine, FILE* input){
     inChar = fgetc(input);
     if(inChar == EOF)
       break;
+    //Appending the character
+    machine->retVal.string[strlen(machine->retVal.string)+1] = '\0';
+    machine->retVal.string[strlen(machine->retVal.string)] = inChar;
+    //Running the machine
     machine->state = (*(machine->transition))(machine, (char)inChar);
   }
 
@@ -27,7 +34,7 @@ void initDFA(DFA* machine){
   machine->rewind = 0;
 
   machine->retVal.retString = 0;
-
+  machine->retVal.string[0]='\0';
 }
 
 //Rejecting a string

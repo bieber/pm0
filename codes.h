@@ -83,6 +83,6 @@ typedef enum {
   wrrpasym,
   misym,
   txokefyawsym
-} token_type;
+} token;
 
 #endif

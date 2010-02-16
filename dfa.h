@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "codes.h"
+
 //The set of possible values the machine can return
 typedef struct{
   int retString;  //True if the machine returns a string
