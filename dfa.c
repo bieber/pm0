@@ -20,8 +20,10 @@ void runDFA(DFA* machine, FILE* input){
   }
 
   //Moves the file pointer back one character if necessary
-  if(machine->rewind)
+  if(machine->rewind){
     fseek(input, -1 * sizeof(char), SEEK_CUR);
+    machine->retVal.string[strlen(machine->retVal.string)-1] = '\0';
+  }
 }
 
 //Initializing an empty machine
