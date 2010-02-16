@@ -36,7 +36,7 @@ int transition(DFA* this, char input){
   case 0:  //Start state
     if(isalpha(input)){
       if(input == 's')
-        return 2;
+        return 3;
       else if(input == 'f')
         return 13;
       else if(input == 't')
@@ -48,7 +48,7 @@ int transition(DFA* this, char input){
       else
         return 1;
     }else if(isdigit(input)){
-      return 46;
+      return 2;
     }else{
       rejectDFA(this);
     }
@@ -61,15 +61,27 @@ int transition(DFA* this, char input){
       rejectDFA(this);
     break;
   
-  case 2:
+  case 2: // Handling digits, not finished yet
+    if(isdigit(input)){
+      if(strlen(this->retVal.retString) <= 5){
+        this->retVal.retString = this->retVal.retString * 10 + input;
+      }
+      else
+        
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 3:
     if(isalnum(input)){
       if(input == 'y')
         return 4;
       else if(input == 'n')
-        return 6;
+        return 8;
       else if(input == 'i'){
         this->accept = 1;
-        return 3;
+        return 4;
       }else
         return 1;
     }else{
@@ -77,7 +89,7 @@ int transition(DFA* this, char input){
     }
     break;
   
-  case 3:
+  case 4:
     if(input == ' '){
       this->retVal.retString = 26;
       this->accept = 1;
@@ -89,10 +101,10 @@ int transition(DFA* this, char input){
     }
     break;
   
-  case 4:
+  case 5:
     if(isalnum(input)){
       if(input == 'a')
-        return 5;
+        return 6;
       else
         return 1;
     }else{
@@ -100,7 +112,7 @@ int transition(DFA* this, char input){
     }
     break;
   
-  case 5:
+  case 6:
     if(isalnum(input)){
       if(input == 'w'){
         this->accept = 1;
@@ -112,24 +124,13 @@ int transition(DFA* this, char input){
     }
     break;
   
-  case 6:
+  case 7:
     if(input == ' '){
       this->retVal.retString = 27;
       this->accept = 1;
       this->halt = 1;
     }else if(isalnum(input)){
       return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 7:
-    if(isalnum(input)){
-      if(input == 'n')
-        return 8;
-      else
-        return 1;
     }else{
       rejectDFA(this);
     }
@@ -570,17 +571,7 @@ int transition(DFA* this, char input){
     break;
   }
   
-  case 46: // Handling digits, not finished yet
-    if(isdigit(input)){
-      if(atoi(this->retVal.retString) <= 99999){
-        this->retVal.retString = this->retVal.retString * 10 + input;
-      }
-      else
-        
-    }else{
-      rejectDFA(this);
-    }
-    break;
+  
     
   return -1;
 }
