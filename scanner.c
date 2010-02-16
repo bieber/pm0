@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 #include "dfa.h"
+#include "codes.h"
 
 int transition(DFA* this, char input);
 
@@ -63,13 +65,15 @@ int transition(DFA* this, char input){
   
   case 2: // Handling digits, not finished yet
     if(isdigit(input)){
-      if(strlen(this->retVal.retString) <= 5){
-        this->retVal.retString = this->retVal.retString * 10 + input;
-      }
-      else
-        
+        if(strlen(this->retVal.string) > 5)
+          printf("Error, invalid numerical length.\n");
+        return 2;
+    }else if(isalpha(input)){
+      printf("Error, invalid numerical value.\n");
     }else{
-      rejectDFA(this);
+      this->accept = 1;
+      this->halt = 1;
+      this->retVal.retString = 1;
     }
     break;
   
@@ -90,14 +94,12 @@ int transition(DFA* this, char input){
     break;
   
   case 4:
-    if(input == ' '){
-      this->retVal.retString = 26;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = sisym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -125,14 +127,12 @@ int transition(DFA* this, char input){
     break;
   
   case 7:
-    if(input == ' '){
-      this->retVal.retString = 27;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = syawsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -181,14 +181,12 @@ int transition(DFA* this, char input){
     break;
   
   case 12:
-    if(input == ' '){
-      this->retVal.retString = 21;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = sngaisym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -222,14 +220,12 @@ int transition(DFA* this, char input){
     break;
     
   case 16:
-    if(input == ' '){
-      this->retVal.retString = 22;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = fpesym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
     
@@ -261,17 +257,12 @@ int transition(DFA* this, char input){
     break;
   
   case 19:
-    if(input == ' '){
-      this->retVal.retString = 23;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
-      if(input == 'k')
-        return 20;
-      else
-        return 1;
+    if(isalnum(input)){
+      return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = txosym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -343,14 +334,12 @@ int transition(DFA* this, char input){
     break;
     
   case 26:
-    if(input == ' '){
-      this->retVal.retString = 33;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = txokefyawsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -400,14 +389,12 @@ int transition(DFA* this, char input){
     break;
   
   case 31:
-    if(input == ' '){
-      this->retVal.retString = 24;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = tsakrrsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   
@@ -468,14 +455,12 @@ int transition(DFA* this, char input){
     break;
     
   case 37:
-    if(input == ' '){
-      this->retVal.retString = 25;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = tengkrrsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
     
@@ -491,14 +476,12 @@ int transition(DFA* this, char input){
     break;
     
   case 39:
-    if(input == ' '){
-      this->retVal.retString = 32;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = misym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
     
@@ -559,14 +542,12 @@ int transition(DFA* this, char input){
     break;
     
   case 45:
-    if(input == ' '){
-      this->retVal.retString = 31;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(isalnum(input)){
+    if(isalnum(input)){
       return 1;
     }else{
-      rejectDFA(this);
+      this->retVal.numeric = wrrpasym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
     }
     break;
   }
