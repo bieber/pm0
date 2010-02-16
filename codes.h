@@ -5,6 +5,10 @@
 #define MAX_STACK_HEIGHT 2000
 #define MAX_CODE_LENGTH 500
 
+//Scanner constants
+#define MAX_IDENT_LENGTH 11
+#define MAX_NUMBER_LENGTH 5
+
 //Opcodes
 typedef enum{
   LIT = 1,
@@ -43,5 +47,42 @@ typedef struct instruction{
   int l;
   int m;
 } instruction;
+
+//Declaration of Token Types
+typedef enum {
+  nulsym = 1,
+  identsym,
+  numbersym,
+  plussym,
+  minussym,
+  multsym,
+  slashsym,
+  oddsym,
+  eqsym,
+  neqsym,
+  lessym, 
+  leqsym,
+  gtrsym,
+  geqsym,
+  lparentsym,
+  rparentsym, 
+  commasym,
+  semicolonsym,
+  periodsym,
+  becomessym,
+  sngaisym, 
+  fpesym,
+  txosym,
+  tsakrrsym,
+  tengkrrsym,
+  sisym,
+  swaysym,
+  constsym, 
+  intsym,
+  procsym,
+  wrrpasym,
+  misym,
+  txokefyawsym
+} token_type;
 
 #endif
