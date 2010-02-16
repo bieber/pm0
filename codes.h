@@ -44,4 +44,39 @@ typedef struct instruction{
   int m;
 } instruction;
 
+//Declaration of Token Types
+typedef enum {
+  nulsym = 1,
+  identsym,
+  numbersym,
+  plussym,
+  minussym,
+  multsym,
+  slashsym,
+  oddsym,
+  eqsym,
+  neqsym,
+  lessym, 
+  leqsym,
+  gtrsym,
+  geqsym,
+  lparentsym,
+  rparentsym, 
+  commasym,
+  semicolonsym,
+  periodsym,
+  becomessym,
+  snga'isym, 
+  fpe'sym,
+  txosym,
+  tsakrrsym,
+  tengkrrsym,
+  sisym,
+  swaysym,
+  constsym, 
+  intsym,
+  procsym,
+  wrrpasym,
+  misym,
+  txokefyawsym} token_type;
 #endif
