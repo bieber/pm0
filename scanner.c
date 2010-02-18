@@ -752,8 +752,89 @@ int transition(DFA* this, char input){
       this->rewind = 1;
     }
     break;
+
+//------------ Handling possibility of comments
+  case 100:
+    if(input == '*'){
+      this->retVal.numeric = nulsym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      return 101;  //The next step in comment processing
+    }else{
+      //If it wasn't a star, we just got a /
+      this->retVal.numeric = slashsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+      this->accept = 1;
+      this->halt = 1;
+    }
+    break;
+
+  case 101:
+    if(input == '*'){
+      return 102;
+    }else{
+      return 101;
+    }
+    break;
+    
+  case 102:
+    if(input == '/'){
+      this->halt = 1;
+    }else if(input == '*'){
+      return 102;
+    }else{
+      return 101;
+    }
+    break;
+//-------- Checking for :=
+  case 200:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = becomessym;
+      this->retVal.retString = 0;
+      this->halt = 1;
+      this->rewind = 0;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind=0;
+      rejectDFA(this);
+    }
+    break;
+
+//--------------- Checking for <=
+  case 300:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = leqsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->halt = 1;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind = 0;
+      rejectDFA(this);
+    }
+    break;
+
+//---------------- Checking for >=
+  case 400:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = geqsym;
+      this->rewind = 0;
+      this->halt = 1;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind = 0;
+      rejectDFA(this);
+    }
+    break;
+
+
   }
-      
+
   return -1;
 }
 
