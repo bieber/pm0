@@ -6,6 +6,8 @@
 #include "dfa.h"
 #include "codes.h"
 
+#define USAGE "Usage: scanner [-q] infile"
+
 struct tokenList{
   char* lexeme;
   token symbol;
@@ -20,15 +22,37 @@ void deleteList(struct tokenList* root);
 int main(int argc, char* argv[]){
 
   FILE* fin;
-  struct tokenList* tokenTable;
+  int verbose = 1;
+  int fileArg = 1;
+  int charIn;
+  int i;
+  struct tokenList* tokenTable=NULL;
   struct tokenList* lastToken;
+  struct tokenList* currToken;
   
   DFA machine;
 
+  //Checking command-line arguments
+  if(argc < 2 || argc > 3){
+    printf("%s\n", USAGE);
+    return 1;
+  }
+
+  //Turning off the verbose flag, if necessary
+  if(argc == 3){
+    fileArg = 2;
+    if(strcmp(argv[1], "-q") == 0)
+      verbose = 0;
+  }
+
   machine.transition = &transition;
 
-  fin = fopen(argv[1], "r");
-  
+  fin = fopen(argv[fileArg], "r");
+  lastToken=0;
+
+  //Inserting a newline before any output gets sent
+  printf("\n");
+
   while(!feof(fin)){
 
     //Initializing and running the machine
@@ -54,54 +78,101 @@ int main(int argc, char* argv[]){
       lastToken = lastToken->next;
     }
     
-
   }
+
   fclose(fin);
 
 
-  return 0;
+  //Printing the input file, if verbose is set
+  if(verbose){
+    printf("\nSource Program:\n");
+    fin=fopen(argv[fileArg], "r");
+    while((charIn = fgetc(fin)) != EOF)
+      printf("%c", (char)charIn);
+    fclose(fin);
+  }
+  
+  //Printing the lexeme table, if verbose is set
+  if(verbose && tokenTable){
+    printf("\nLexeme Table:\n");
+    printf("%s        ", "Lexeme");
+    printf("%s\n", "Token");
+    printf("-----------------\n");
+    
+    //Printing all the lexemes
+    currToken = tokenTable;
+    while(currToken){
+      printf("%s ", currToken->lexeme);
+      for(i = 0; i < 12 - strlen(currToken->lexeme); i++)
+        printf(" ");
+      printf("%d\n", (int)(currToken->symbol));
+      currToken=currToken->next;
+    }
+    
+  }
+  
+
+return 0;
 }
 
 int transition(DFA* this, char input){
   
-  printf("%d - %d\n", this->state, input);
-
   switch(this->state){
   case 0:  //Start state
-    if(isalpha(input)){
-      if(input == 's')
+    if(isspace(input)){
+      this->accept = 1;
+      this->retVal.numeric = nulsym;
+      this->retVal.retString = 0;
+      this->halt = 1;
+    }else if(isalpha(input)){
+      if(input == 's'){
         return 3;
-      else if(input == 'f')
+      }else if(input == 'f'){
         return 13;
-      else if(input == 't')
+      }else if(input == 't'){
         return 17;
-      else if(input == 'm')
+      }else if(input == 'm'){
         return 38;
-      else if(input == 'w')
+      }else if(input == 'w'){
         return 40;
-      else
+      }else{
+        this->retVal.numeric = identsym;
+        this->retVal.retString = 1;
+        this->accept = 1;
+        this->rewind = 1;
         return 1;
+      }
     }else if(isdigit(input)){
       return 2;
     }else{
+      printf("Invalid Symbols\n");
+      this->accept = 0;
+      this->halt = 1;
       rejectDFA(this);
     }
     break;
 
   case 1:
-    if(isalnum(input))
+    if(strlen(this->retVal.string) > MAX_IDENT_LENGTH){
+      printf("Error: Identifier too long\n");
+      this->accept=0;
+      this->halt = 1;
+    }
+
+    if(isalnum(input)){
       return 1;
-    else
-      rejectDFA(this);
+    }else{
+      this->halt = 1;
+    }
     break;
   
   case 2: // Handling digits, not finished yet
     if(isdigit(input)){
         if(strlen(this->retVal.string) > 5)
-          printf("Error, invalid numerical length.\n");
+          printf("Error: Invalid numerical length\n");
         return 2;
     }else if(isalpha(input)){
-      printf("Error, invalid numerical value.\n");
+      printf("Error: Invalid identifier\n");
     }else{
       this->accept = 1;
       this->halt = 1;
