@@ -111,8 +111,10 @@ int main(int argc, char* argv[]){
     
   }
   
+  //Freeing memory
+  deleteList(tokenTable);
 
-return 0;
+  return 0;
 }
 
 int transition(DFA* this, char input){
@@ -125,6 +127,14 @@ int transition(DFA* this, char input){
       this->retVal.retString = 0;
       this->halt = 1;
     }else if(isalpha(input)){
+
+      //From this point, the default is to return an identifier, so we
+      //set up the machine's state accordingly
+      this->accept = 1;
+      this->retVal.numeric = identsym;
+      this->retVal.retString = 1;
+      this->rewind = 1;
+
       if(input == 's'){
         return 3;
       }else if(input == 'f'){
@@ -136,23 +146,18 @@ int transition(DFA* this, char input){
       }else if(input == 'w'){
         return 40;
       }else{
-        this->retVal.numeric = identsym;
-        this->retVal.retString = 1;
-        this->accept = 1;
-        this->rewind = 1;
         return 1;
       }
     }else if(isdigit(input)){
       return 2;
     }else{
       printf("Invalid Symbols\n");
-      this->accept = 0;
-      this->halt = 1;
+      this->rewind = 0;
       rejectDFA(this);
     }
     break;
 
-  case 1:
+  case 1:  //Handling generic identifiers
     if(strlen(this->retVal.string) > MAX_IDENT_LENGTH){
       printf("Error: Identifier too long\n");
       this->accept=0;
@@ -166,17 +171,24 @@ int transition(DFA* this, char input){
     }
     break;
   
-  case 2: // Handling digits, not finished yet
+  case 2: // Handling digits
     if(isdigit(input)){
-        if(strlen(this->retVal.string) > 5)
+      if(strlen(this->retVal.string) > MAX_NUMBER_LENGTH){
           printf("Error: Invalid numerical length\n");
-        return 2;
+          this->rewind = 0;
+          rejectDFA(this);
+      }
+      return 2;
     }else if(isalpha(input)){
       printf("Error: Invalid identifier\n");
+      this->rewind=0;
+      rejectDFA(this);
     }else{
       this->accept = 1;
       this->halt = 1;
       this->retVal.retString = 1;
+      this->retVal.numeric = numbersym;
+      this->rewind = 1;
     }
     break;
   
