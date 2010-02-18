@@ -6,26 +6,58 @@
 #include "dfa.h"
 #include "codes.h"
 
+struct tokenList{
+  char* lexeme;
+  token symbol;
+  int printLexeme; //Flag to tell whether we should print the lexeme in output
+  struct tokenList* next;
+};
+
 int transition(DFA* this, char input);
+struct tokenList* newNode(char* lexeme, int symbol, int print);
+void deleteList(struct tokenList* root);
 
 int main(int argc, char* argv[]){
 
   FILE* fin;
+  struct tokenList* tokenTable;
+  struct tokenList* lastToken;
   
   DFA machine;
-  initDFA(&machine);
-  machine.accept = 1;
+
   machine.transition = &transition;
 
   fin = fopen(argv[1], "r");
-  runDFA(&machine, fin);
+  
+  while(!feof(fin)){
 
+    //Initializing and running the machine
+    initDFA(&machine);
+    runDFA(&machine, fin);
+    
+    //In case of error, skip output
+    if(!machine.accept)
+      continue;
+
+    //If we get nulsym, skip output
+    if(machine.retVal.numeric == nulsym)
+      continue;
+
+    //Otherwise, add this token to the list
+    if(!tokenTable){
+      tokenTable = newNode(machine.retVal.string, machine.retVal.numeric, 
+                           machine.retVal.retString);
+      lastToken = tokenTable;
+    }else{
+      lastToken->next = newNode(machine.retVal.string, machine.retVal.numeric,
+                                machine.retVal.retString);
+      lastToken = lastToken->next;
+    }
+    
+
+  }
   fclose(fin);
 
-  if(machine.accept)
-    printf("String accepted\n");
-  else
-    printf("String rejected\n");
 
   return 0;
 }
@@ -557,20 +589,20 @@ int transition(DFA* this, char input){
   return -1;
 }
 
+struct tokenList* newNode(char* lexeme, int symbol, int print){
+  struct tokenList* retVal=(struct tokenList*)malloc(sizeof(struct tokenList));
+  retVal->lexeme = strdup(lexeme);
+  retVal->symbol = symbol;
+  retVal->printLexeme = print;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  return retVal;
+}
+void deleteList(struct tokenList* root){
+  struct tokenList* next;
+  while(root){
+    free(root->lexeme);
+    next = root->next;
+    free(root);
+    root = next;
+  }
+}

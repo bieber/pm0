@@ -76,7 +76,7 @@ typedef enum {
   tsakrrsym,
   tengkrrsym,
   sisym,
-  swaysym,
+  syawsym,
   constsym, 
   intsym,
   procsym,
