@@ -194,7 +194,7 @@ int transition(DFA* this, char input){
         this->retVal.numeric = slashsym;
         this->retVal.retString = 0;
         this->rewind = 0;
-        return 100;
+        return 10;
       }else if(input == '('){ // Found an opening parenthesis
         this->retVal.numeric = lparentsym;
         this->retVal.retString = 0;
@@ -214,7 +214,7 @@ int transition(DFA* this, char input){
         this->rewind = 0;
         this->halt = 1;
       }else if(input == ':'){ // Go to state 103, checking for := (becomes)
-        return 103;
+        return 20;
       }else if(input == ','){ // Found a comma
         this->retVal.numeric = commasym;
         this->retVal.retString = 0;
@@ -228,9 +228,9 @@ int transition(DFA* this, char input){
         this->rewind = 0;
         this->halt = 1;
       }else if(input == '<'){ // Go to state 101, checking for < or <=
-        return 101;
+        return 30;
       }else if(input == '>'){ // Go to state 102, checking for > or >=
-        return 102;
+        return 40;
       }else if(input == ';'){ // Found a semicolon
         this->retVal.numeric = semicolonsym;
         this->retVal.retString = 0;
