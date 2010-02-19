@@ -117,6 +117,19 @@ int main(int argc, char* argv[]){
   return 0;
 }
 
+/*
+  ===== Mini State Map =====
+  | 0: Entry State
+  | 1: Identifier Loop
+  | 2: Number Loop
+  | 3-99: Reserved word checking
+  | 100-199: Comment checking
+  | 200-299: := checking
+  | 300-399: <= checking
+  | 400-499: >= checking
+  ==========================
+ */
+
 int transition(DFA* this, char input){
   
   switch(this->state){
@@ -149,7 +162,81 @@ int transition(DFA* this, char input){
         return 1;
       }
     }else if(isdigit(input)){
+      this->accept=1;
+      this->retVal.numeric=numbersym;
+      this->retVal.retString=0;
       return 2;
+  //---------Cases for symbols---------------//
+    }else if(input == '+'){
+      this->retVal.numeric = plussym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      this->halt=1;
+    }else if(input == '-'){
+      this->retVal.numeric = minussym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      this->halt = 1;
+    }else if(input == '*'){
+      this->retVal.numeric = multsym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      this->halt = 1;
+    }else if(input == '/'){
+      this->retVal.numeric = slashsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      return 100;  //This is the state to check for comments
+    }else if(input == '('){
+      this->retVal.numeric = lparentsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }else if(input == ')'){
+      this->retVal.numeric = rparentsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }else if(input == '='){
+      this->retVal.numeric = eqsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }else if(input == ':'){
+      this->retVal.retString = 0;
+      return 200; //This is the state to check for :=
+    }else if(input == ','){
+      this->retVal.numeric=commasym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }else if(input == '.'){
+      this->retVal.numeric = periodsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }else if(input == '<'){
+      this->retVal.numeric = lessym;
+      this->retVal.retString = 0;
+      return 300;
+    }else if(input == '>'){
+      this->retVal.numeric = gtrsym;
+      this->retVal.retString = 0;
+      return 400;
+    }else if(input == ';'){
+      this->retVal.numeric = semicolonsym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      this->halt = 1;
     }else{
       printf("Invalid Symbols\n");
       this->rewind = 0;
@@ -665,10 +752,89 @@ int transition(DFA* this, char input){
       this->rewind = 1;
     }
     break;
-  }
-  
-  
+
+//------------ Handling possibility of comments
+  case 100:
+    if(input == '*'){
+      this->retVal.numeric = nulsym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->rewind = 0;
+      return 101;  //The next step in comment processing
+    }else{
+      //If it wasn't a star, we just got a /
+      this->retVal.numeric = slashsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+      this->accept = 1;
+      this->halt = 1;
+    }
+    break;
+
+  case 101:
+    if(input == '*'){
+      return 102;
+    }else{
+      return 101;
+    }
+    break;
     
+  case 102:
+    if(input == '/'){
+      this->halt = 1;
+    }else if(input == '*'){
+      return 102;
+    }else{
+      return 101;
+    }
+    break;
+//-------- Checking for :=
+  case 200:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = becomessym;
+      this->retVal.retString = 0;
+      this->halt = 1;
+      this->rewind = 0;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind=0;
+      rejectDFA(this);
+    }
+    break;
+
+//--------------- Checking for <=
+  case 300:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = leqsym;
+      this->retVal.retString = 0;
+      this->rewind = 0;
+      this->halt = 1;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind = 0;
+      rejectDFA(this);
+    }
+    break;
+
+//---------------- Checking for >=
+  case 400:
+    if(input == '='){
+      this->accept = 1;
+      this->retVal.numeric = geqsym;
+      this->rewind = 0;
+      this->halt = 1;
+    }else{
+      printf("Error: Invalid Symbols\n");
+      this->rewind = 0;
+      rejectDFA(this);
+    }
+    break;
+
+
+  }
+
   return -1;
 }
 
