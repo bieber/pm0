@@ -116,19 +116,23 @@ int main(int argc, char* argv[]){
 
   return 0;
 }
-
+ 
 /*
-  ===== Mini State Map =====
-  | 0: Entry State
-  | 1: Identifier Loop
-  | 2: Number Loop
-  | 3-99: Reserved word checking
-  | 100-199: Comment checking
-  | 200-299: := checking
-  | 300-399: <= checking
-  | 400-499: >= checking
-  ==========================
- */
+===== Mini State Map =====
+| 0: Entry State
+| 1: Identifier Loop
+| 2: Number Loop
+| 10-19: Comment checking
+| 20-29: Checking for :=
+| 30-39: Checking for <=
+| 40-49: Checking for >=
+| 100-199: Reserved words beginning with s
+| 200-299: Reserved words beginning with f
+| 300-399: Reserved words beginning with t
+| 400-499: Reserved words beginning with m
+| 500-599: Reserved words beginning with w
+==========================
+*/
 
 int transition(DFA* this, char input){
   
@@ -149,15 +153,15 @@ int transition(DFA* this, char input){
       this->rewind = 1;
 
       if(input == 's'){
-        return 3;
+        return 100;
       }else if(input == 'f'){
-        return 13;
+        return 200;
       }else if(input == 't'){
-        return 17;
+        return 300;
       }else if(input == 'm'){
-        return 38;
+        return 400;
       }else if(input == 'w'){
-        return 40;
+        return 500;
       }else{
         return 1;
       }
@@ -166,81 +170,78 @@ int transition(DFA* this, char input){
       this->retVal.numeric=numbersym;
       this->retVal.retString=0;
       return 2;
-  //---------Cases for symbols---------------//
-    }else if(input == '+'){
-      this->retVal.numeric = plussym;
-      this->retVal.retString = 0;
-      this->accept = 1;
-      this->rewind = 0;
-      this->halt=1;
-    }else if(input == '-'){
-      this->retVal.numeric = minussym;
-      this->retVal.retString = 0;
-      this->accept = 1;
-      this->rewind = 0;
-      this->halt = 1;
-    }else if(input == '*'){
-      this->retVal.numeric = multsym;
-      this->retVal.retString = 0;
-      this->accept = 1;
-      this->rewind = 0;
-      this->halt = 1;
-    }else if(input == '/'){
-      this->retVal.numeric = slashsym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      return 100;  //This is the state to check for comments
-    }else if(input == '('){
-      this->retVal.numeric = lparentsym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(input == ')'){
-      this->retVal.numeric = rparentsym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(input == '='){
-      this->retVal.numeric = eqsym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(input == ':'){
-      this->retVal.retString = 0;
-      return 200; //This is the state to check for :=
-    }else if(input == ','){
-      this->retVal.numeric=commasym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(input == '.'){
-      this->retVal.numeric = periodsym;
-      this->retVal.retString = 0;
-      this->rewind = 0;
-      this->accept = 1;
-      this->halt = 1;
-    }else if(input == '<'){
-      this->retVal.numeric = lessym;
-      this->retVal.retString = 0;
-      return 300;
-    }else if(input == '>'){
-      this->retVal.numeric = gtrsym;
-      this->retVal.retString = 0;
-      return 400;
-    }else if(input == ';'){
-      this->retVal.numeric = semicolonsym;
-      this->retVal.retString = 0;
-      this->accept = 1;
-      this->rewind = 0;
-      this->halt = 1;
+  //---------Cases for symbols---------------//    
     }else{
+      if(input == '+'){ // Found a plus
+        this->retVal.numeric = plussym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt=1;
+      }else if(input == '-'){ // Found a minus
+        this->retVal.numeric = minussym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt=1;
+      }else if(input == '*'){ // Found a multiply
+        this->retVal.numeric = multsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt=1;
+      }else if(input == '/'){ // Go to state 100, check for / or /*
+        this->retVal.numeric = slashsym;
+        this->retVal.retString = 0;
+        this->rewind = 0;
+        return 100;
+      }else if(input == '('){ // Found an opening parenthesis
+        this->retVal.numeric = lparentsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else if(input == ')'){ // Found a closing parenthesis
+        this->retVal.numeric = rparentsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else if(input == '='){ // Found an equals
+        this->retVal.numeric = eqsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else if(input == ':'){ // Go to state 103, checking for := (becomes)
+        return 103;
+      }else if(input == ','){ // Found a comma
+        this->retVal.numeric = commasym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else if(input == '.'){ // Found a period
+        this->retVal.numeric = periodsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else if(input == '<'){ // Go to state 101, checking for < or <=
+        return 101;
+      }else if(input == '>'){ // Go to state 102, checking for > or >=
+        return 102;
+      }else if(input == ';'){ // Found a semicolon
+        this->retVal.numeric = semicolonsym;
+        this->retVal.retString = 0;
+        this->accept = 1;
+        this->rewind = 0;
+        this->halt = 1;
+      }else{
       printf("Invalid Symbols\n");
       this->rewind = 0;
       rejectDFA(this);
+      }
     }
     break;
 
@@ -268,499 +269,25 @@ int transition(DFA* this, char input){
       return 2;
     }else if(isalpha(input)){
       printf("Error: Invalid identifier\n");
-      this->rewind=0;
+      this->rewind = 0;
       rejectDFA(this);
     }else{
-      this->accept = 1;
-      this->halt = 1;
       this->retVal.retString = 1;
       this->retVal.numeric = numbersym;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 3:
-    if(isalnum(input)){
-      if(input == 'y')
-        return 4;
-      else if(input == 'n')
-        return 8;
-      else if(input == 'i'){
-        this->accept = 1;
-        return 4;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 4:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = sisym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 5:
-    if(isalnum(input)){
-      if(input == 'a')
-        return 6;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 6:
-    if(isalnum(input)){
-      if(input == 'w'){
-        this->accept = 1;
-        return 1;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 7:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = syawsym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 8:
-    if(isalnum(input)){
-      if(input == 'g')
-        return 9;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 9:
-    if(isalnum(input)){
-      if(input == 'a')
-        return 8;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 10:
-    if(input == '\''){
-      return 11;
-    }else if(isalnum(input)){
-      return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 11:
-    if(isalnum(input)){
-      if(input == 'i'){
-        this->accept = 1;
-        return 12;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 12:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = sngaisym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 13:
-    if(isalnum(input)){
-      if(input == 'p')
-        return 14;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 14:
-    if(isalnum(input)){
-      if(input == 'e')
-        return 15;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 15:
-    if(input == '\''){
       this->accept = 1;
-      return 16;
-    }else if(isalnum(input)){
-      return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 16:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = fpesym;
-      this->retVal.retString = 0;
       this->rewind = 1;
-    }
-    break;
-    
-  case 17:
-    if(isalnum(input)){
-      if(input == 'x')
-        return 18;
-      else if(input == 's')
-        return 27;
-      else if(input == 'e')
-        return 32;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 18:
-    if(isalnum(input)){
-      if(input == 'o'){
-        this->accept = 1;
-        return 19;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
+      this->halt = 1;
     }
     break;
   
-  case 19:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = txosym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 20:
-    if(isalnum(input)){
-      if(input == 'e')
-        return 21;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 21:
-    if(isalnum(input)){
-      if(input == 'f')
-        return 22;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 22:
-    if(isalnum(input)){
-      if(input == 'y')
-        return 23;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 23:
-    if(isalnum(input)){
-      if(input == 'y')
-        return 24;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 24:
-    if(isalnum(input)){
-      if(input == 'a')
-        return 25;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 25:
-    if(isalnum(input)){
-      if(input == 'w'){
-        this->accept = 1;
-        return 26;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 26:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = txokefyawsym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 27:
-    if(isalnum(input)){
-      if(input == 'a')
-        return 28;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 28:
-    if(isalnum(input)){
-      if(input == 'k')
-        return 29;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 29:
-    if(isalnum(input)){
-      if(input == 'r')
-        return 30;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 30:
-    if(isalnum(input)){
-      if(input == 'r'){
-        this->accept = 1;
-        return 31;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 31:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = tsakrrsym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-  
-  case 32:
-    if(isalnum(input)){
-      if(input == 'n')
-        return 33;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 33:
-    if(isalnum(input)){
-      if(input == 'g')
-        return 34;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 34:
-    if(isalnum(input)){
-      if(input == 'k')
-        return 35;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 35:
-    if(isalnum(input)){
-      if(input == 'r')
-        return 36;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 36:
-    if(isalnum(input)){
-      if(input == 'r'){
-        this->accept = 1;
-        return 37;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 37:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = tengkrrsym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-    
-  case 38:
-    if(isalnum(input)){
-      if(input == 'i')
-        return 39;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 39:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = misym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-    
-  case 40:
-    if(isalnum(input)){
-      if(input == 'r')
-        return 41;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 41:
-    if(isalnum(input)){
-      if(input == 'r')
-        return 42;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 42:
-    if(isalnum(input)){
-      if(input == 'r')
-        return 43;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-  
-  case 43:
-    if(isalnum(input)){
-      if(input == 'p')
-        return 44;
-      else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 44:
-    if(isalnum(input)){
-      if(input == 'a'){
-        this->accept = 1;
-        return 45;
-      }else
-        return 1;
-    }else{
-      rejectDFA(this);
-    }
-    break;
-    
-  case 45:
-    if(isalnum(input)){
-      return 1;
-    }else{
-      this->retVal.numeric = wrrpasym;
-      this->retVal.retString = 0;
-      this->rewind = 1;
-    }
-    break;
-
-//------------ Handling possibility of comments
-  case 100:
+  //------------ Handling possibility of comments
+  case 10:
     if(input == '*'){
       this->retVal.numeric = nulsym;
       this->retVal.retString = 0;
       this->accept = 1;
       this->rewind = 0;
-      return 101;  //The next step in comment processing
+      return 11; //The next step in comment processing
     }else{
       //If it wasn't a star, we just got a /
       this->retVal.numeric = slashsym;
@@ -770,26 +297,26 @@ int transition(DFA* this, char input){
       this->halt = 1;
     }
     break;
-
-  case 101:
+ 
+  case 11:
     if(input == '*'){
-      return 102;
+      return 12;
     }else{
-      return 101;
+      return 11;
     }
     break;
     
-  case 102:
+  case 12:
     if(input == '/'){
       this->halt = 1;
     }else if(input == '*'){
-      return 102;
+      return 12;
     }else{
-      return 101;
+      return 11;
     }
     break;
 //-------- Checking for :=
-  case 200:
+  case 20:
     if(input == '='){
       this->accept = 1;
       this->retVal.numeric = becomessym;
@@ -802,9 +329,9 @@ int transition(DFA* this, char input){
       rejectDFA(this);
     }
     break;
-
+ 
 //--------------- Checking for <=
-  case 300:
+  case 30:
     if(input == '='){
       this->accept = 1;
       this->retVal.numeric = leqsym;
@@ -817,9 +344,9 @@ int transition(DFA* this, char input){
       rejectDFA(this);
     }
     break;
-
+ 
 //---------------- Checking for >=
-  case 400:
+  case 40:
     if(input == '='){
       this->accept = 1;
       this->retVal.numeric = geqsym;
@@ -831,10 +358,465 @@ int transition(DFA* this, char input){
       rejectDFA(this);
     }
     break;
-
-
+  
+  case 100: // Found s, looking for "si", "syaw", "snga'i" or identifier
+    if(isalnum(input)){
+      if(input == 'i'){
+        this->accept = 1;
+        return 101;
+      }else if(input == 'y')
+        return 102;
+      else if(input == 'n')
+        return 105;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 101: // Found i, finishing "si" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = sisym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 102: // Found y, looking for "syaw" or identifier
+    if(isalnum(input)){
+      if(input == 'a')
+        return 103;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 103: // Found a, looking for "syaw" or identifier
+    if(isalnum(input)){
+      if(input == 'w'){
+        this->accept = 1;
+        return 104;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 104: // Found w, finishing "syaw" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = syawsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 105: // Found n, looking for "snga'i" or identifier
+    if(isalnum(input)){
+      if(input == 'g')
+        return 106;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 106: // Found g, looking for "snga'i" or identifier
+    if(isalnum(input)){
+      if(input == 'a')
+        return 107;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 107: // Found a, loooking for "snga'i" or identifier
+    if(input == '\''){
+      return 108;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 108: // Found ', looking for "snga'i" or identifier
+    if(isalnum(input)){
+      if(input == 'i'){
+        this->accept = 1;
+        return 109;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 109: // Found i, finishing "snga'i" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = sngaisym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 200: // Found f, looking for "fpe'" or identifier
+    if(isalnum(input)){
+      if(input == 'p')
+        return 201;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 201: // Found p, looking for "fpe'" or identifier
+    if(isalnum(input)){
+      if(input == 'e')
+        return 202;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 202: // Found e, looking for "fpe'" or identifier
+    if(input == '\''){
+      this->accept = 1;
+      return 203;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 203: // Found ', finishing "fpe'" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = fpesym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+    
+  case 300: // Found t, looking for "txo", "txokefyaw", "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'x')
+        return 301;
+      else if(input == 's')
+        return 314;
+      else if(input == 'e')
+        return 32;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 301: // Found x, looking for "txo", "txokefyaw", or identifier
+    if(isalnum(input)){
+      if(input == 'o'){
+        this->accept = 1;
+        return 302;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 302: // Found o, finishing "txo", or looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'k')
+        return 303;
+      else
+        return 1;
+    }else{
+      this->retVal.numeric = txosym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 303: // Found k, looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'e')
+        return 304;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 304: // Found e, looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'f')
+        return 305;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 305: // Found f, looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'y')
+        return 306;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 306: // Found y, looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'a')
+        return 307;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 307: // Found a, looking for "txokefyaw" or identifier
+    if(isalnum(input)){
+      if(input == 'w'){
+        this->accept = 1;
+        return 308;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 308: // Found w, finishing "txokefyaw" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = txokefyawsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 309: // Found s, looking for "tsakrr" or identifier
+    if(isalnum(input)){
+      if(input == 'a')
+        return 310;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 310: // Found a, looking for "tsakrr" or identifier
+    if(isalnum(input)){
+      if(input == 'k')
+        return 311;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 311: // Found k, looking for "tsakrr" or identifier
+    if(isalnum(input)){
+      if(input == 'r')
+        return 312;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 312: // Found r, looking for "tsakrr" or identifier
+    if(isalnum(input)){
+      if(input == 'r'){
+        this->accept = 1;
+        return 313;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 313: // Found r, finishing "tsakrr" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = tsakrrsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+  
+  case 314: // Found e, looking for "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'n')
+        return 315;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 315: // Found n, looking for "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'g')
+        return 316;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 316: // Found g, looking for "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'k')
+        return 317;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 317: // Found k, looking for "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'r')
+        return 318;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 318: // Found r, looking for "tengkrr" or identifier
+    if(isalnum(input)){
+      if(input == 'r'){
+        this->accept = 1;
+        return 319;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 319: // Found r, finishing "tengkrr" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = tengkrrsym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+    
+  case 400: // Found m, looking for "mi" or identifier
+    if(isalnum(input)){
+      if(input == 'i')
+        return 401;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 401: // Found i, finishing "mi" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = misym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
+    
+  case 500: // Found w, looking for "wrrpa" or identifier
+    if(isalnum(input)){
+      if(input == 'r')
+        return 501;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+  
+  case 501: // Found r, looking for "wrrpa" or identifier
+    if(isalnum(input)){
+      if(input == 'r')
+        return 502;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 502: // Found r, looking for "wrrpa" or identifier
+    if(isalnum(input)){
+      if(input == 'p')
+        return 503;
+      else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 503: // Found p, looking for "wrrpa" or identifier
+    if(isalnum(input)){
+      if(input == 'a'){
+        this->accept = 1;
+        return 504;
+      }else
+        return 1;
+    }else{
+      rejectDFA(this);
+    }
+    break;
+    
+  case 504: // Found a, finishing "wrrpa" or looking for identifier
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = wrrpasym;
+      this->retVal.retString = 0;
+      this->rewind = 1;
+    }
+    break;
   }
-
+  
+  
+    
   return -1;
 }
 
