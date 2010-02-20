@@ -90,7 +90,7 @@ int main(int argc, char* argv[]){
   //Printing the input file, if verbose is set
   if(verbose){
     printf("\nSource Program:\n");
-    fin=fopen(argv[fileArg], "r");
+    fin = fopen(argv[fileArg], "r");
     while((charIn = fgetc(fin)) != EOF)
       printf("%c", (char)charIn);
     fclose(fin);
@@ -990,6 +990,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 601: // Found r, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1004,6 +1005,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 602: // Found o, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1018,6 +1020,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 603: // Found c, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1032,6 +1035,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 604: // Found e, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1046,6 +1050,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 605: // Found d, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1060,6 +1065,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 606: // Found u, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1074,6 +1080,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 607: // Found r, looking for "procedure" or identifier
     if(isalnum(input)){
@@ -1088,6 +1095,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
   
   case 608: // Found e, finishing "procedure" or looking for identifier
     if(isalnum(input)){
@@ -1100,6 +1108,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
   
   case 700: // Found i, looking for "int" or identifier
     if(isalnum(input)){
@@ -1114,6 +1123,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
   
   case 701: // Found n, looking for "int" or identifier
     if(isalnum(input)){
@@ -1128,6 +1138,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 702: // Found t, finishing "int" or looking for identifier
     if(isalnum(input)){
@@ -1139,6 +1150,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
   
   case 800: // Found o, looking for "odd" or identifier
     if(isalnum(input)){
@@ -1153,6 +1165,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 801: // Found d, looking for "odd" or identifier
     if(isalnum(input)){
@@ -1167,6 +1180,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
     
   case 802: // Found d, finishing "odd" or looking for identifier
     if(isalnum(input)){
@@ -1178,6 +1192,7 @@ int transition(DFA* this, char input){
       this->rewind = 1;
       this->halt = 1;
     }
+    break;
    
   }
     
