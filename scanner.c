@@ -528,6 +528,8 @@ int transition(DFA* this, char input){
     if(isalnum(input)){
       if(input == 'p')
         return 201;
+      else
+        return 1;
     }else{
       this->retVal.numeric = identsym;
       this->retVal.retString = 1;
@@ -541,6 +543,8 @@ int transition(DFA* this, char input){
     if(isalnum(input)){
       if(input == 'e')
         return 202;
+      else
+        return 1;
     }else{
       this->retVal.numeric = identsym;
       this->retVal.retString = 1;
