@@ -178,9 +178,9 @@ int transition(DFA* this, char input){
         return 1;
       }
     }else if(isdigit(input)){
-      this->accept=1;
-      this->retVal.numeric=numbersym;
-      this->retVal.retString=0;
+      this->accept = 1;
+      this->retVal.numeric = numbersym;
+      this->retVal.retString = 0;
       return 2;
   //---------Cases for symbols---------------//    
     }else{
@@ -262,7 +262,7 @@ int transition(DFA* this, char input){
       return 1;
     }else{
       if(strlen(this->retVal.string) > MAX_IDENT_LENGTH){
-       printf("Error: Identifier too long\n");
+       printf("Error: Identifier too long %s\n", this->retVal.string);
        this->accept = 0;
        this->halt = 1;
       }
@@ -283,7 +283,8 @@ int transition(DFA* this, char input){
           this->rewind = 0;
           rejectDFA(this);
       }
-      return 2;
+      else
+        return 2;
     }else if(isalpha(input)){
       printf("Error: Invalid identifier\n");
       this->rewind = 0;
@@ -577,14 +578,15 @@ int transition(DFA* this, char input){
     }
     break;
     
-  case 300: // Found t, looking for "txo", "txokefyaw", "tengkrr" or identifier
+  case 300: // Found t, looking for "txo", "txokefyaw", "tsakrr", "tengkrr" or
+            //identifier
     if(isalnum(input)){
       if(input == 'x')
         return 301;
       else if(input == 's')
-        return 314;
+        return 309;
       else if(input == 'e')
-        return 32;
+        return 314;
       else
         return 1;
     }else{
