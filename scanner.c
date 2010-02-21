@@ -202,7 +202,7 @@ int transition(DFA* this, char input){
         this->accept = 1;
         this->rewind = 0;
         this->halt=1;
-      }else if(input == '/'){ // Go to state 100, check for / or /*
+      }else if(input == '/'){ // Go to state 10, check for / or /*
         this->retVal.numeric = slashsym;
         this->retVal.retString = 0;
         this->rewind = 0;
@@ -225,7 +225,7 @@ int transition(DFA* this, char input){
         this->accept = 1;
         this->rewind = 0;
         this->halt = 1;
-      }else if(input == ':'){ // Go to state 103, checking for := (becomes)
+      }else if(input == ':'){ // Go to state 20, checking for := (becomes)
         return 20;
       }else if(input == ','){ // Found a comma
         this->retVal.numeric = commasym;
@@ -239,9 +239,9 @@ int transition(DFA* this, char input){
         this->accept = 1;
         this->rewind = 0;
         this->halt = 1;
-      }else if(input == '<'){ // Go to state 101, checking for < or <=
+      }else if(input == '<'){ // Go to state 30, checking for < or <=
         return 30;
-      }else if(input == '>'){ // Go to state 102, checking for > or >=
+      }else if(input == '>'){ // Go to state 40, checking for > or >=
         return 40;
       }else if(input == ';'){ // Found a semicolon
         this->retVal.numeric = semicolonsym;
