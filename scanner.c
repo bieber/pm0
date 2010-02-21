@@ -86,7 +86,6 @@ int main(int argc, char* argv[]){
 
   fclose(fin);
 
-
   //Printing the input file, if verbose is set
   if(verbose){
     printf("\nSource Program:\n");
@@ -107,7 +106,7 @@ int main(int argc, char* argv[]){
     currToken = tokenTable;
     while(currToken){
       printf("%s ", currToken->lexeme);
-      for(i = 0; i < 12 - strlen(currToken->lexeme); i++)
+      for(i = 0; i < (MAX_IDENT_LENGTH + 1) - strlen(currToken->lexeme); i++)
         printf(" ");
       printf("%d\n", (int)(currToken->symbol));
       currToken=currToken->next;
@@ -251,7 +250,7 @@ int transition(DFA* this, char input){
         this->rewind = 0;
         this->halt = 1;
       }else{
-      printf("Invalid Symbols\n");
+      printf("Error: Invalid Symbol %c\n", input);
       this->rewind = 0;
       rejectDFA(this);
       }
@@ -342,7 +341,7 @@ int transition(DFA* this, char input){
       this->rewind = 0;
       this->halt = 1;
     }else{
-      printf("Error: Invalid Symbols\n");
+      printf("Error: Invalid Symbol %c\n", input);
       this->rewind=0;
       rejectDFA(this);
     }
@@ -357,7 +356,7 @@ int transition(DFA* this, char input){
       this->rewind = 0;
       this->halt = 1;
     }else{
-      printf("Error: Invalid Symbols\n");
+      printf("Error: Invalid Symbol %c\n", input);
       this->rewind = 0;
       rejectDFA(this);
     }
@@ -372,7 +371,7 @@ int transition(DFA* this, char input){
       this->rewind = 0;
       this->halt = 1;
     }else{
-      printf("Error: Invalid Symbols\n");
+      printf("Error: Invalid Symbol %c\n", input);
       this->rewind = 0;
       rejectDFA(this);
     }
@@ -505,11 +504,10 @@ int transition(DFA* this, char input){
       }else
         return 1;
     }else{
-      this->retVal.numeric = identsym;
-      this->retVal.retString = 1;
-      this->accept = 1;
-      this->rewind = 1;
-      this->halt = 1;
+      if(this->retVal.string[strlen(this->retVal.string)-1] == '\n')
+        this->retVal.string[strlen(this->retVal.string)-1] = '\0';
+      printf("Error: Invalid Identifier %s\n", this->retVal.string);
+      rejectDFA(this);
     }
     break;
   
@@ -568,7 +566,8 @@ int transition(DFA* this, char input){
     
   case 203: // Found ', finishing "fpe'" or looking for identifier
     if(isalnum(input)){
-      return 1;
+      printf("Error: Invalid Identifier %s\n", this->retVal.string);
+      rejectDFA(this);
     }else{
       this->retVal.numeric = fpesym;
       this->retVal.retString = 0;
