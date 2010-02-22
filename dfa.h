@@ -11,6 +11,8 @@ typedef struct{
   int retString;  //True if the machine returns a string
   token numeric;
   char string[MAX_IDENT_LENGTH + 2];
+  int line;
+  int character;
 } MachineValue;
 
 //Describes a DFA
@@ -25,6 +27,11 @@ typedef struct DFA{
   int accept;  //Machine is in accept state if set to 1
   int rewind;  //Input file pointer will be stepped back 1 char if this is set
   
+  //Location in input file
+  int line;
+  int column;
+  int lastLineLength;
+
   //Return value
   MachineValue retVal;  //The machine's return value
   

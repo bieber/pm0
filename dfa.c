@@ -12,6 +12,15 @@ void runDFA(DFA* machine, FILE* input){
     inChar = fgetc(input);
     if(inChar == EOF)
       break;
+
+    //Updating location information
+    machine->column++;
+    if(inChar == '\n'){
+      machine->lastLineLength = machine->column;
+      machine->column = 1;
+      (machine->line)++;
+    }
+
     //Appending the character
     machine->retVal.string[strlen(machine->retVal.string)+1] = '\0';
     machine->retVal.string[strlen(machine->retVal.string)] = inChar;
@@ -23,6 +32,11 @@ void runDFA(DFA* machine, FILE* input){
   if(machine->rewind){
     fseek(input, -1 * sizeof(char), SEEK_CUR);
     machine->retVal.string[strlen(machine->retVal.string)-1] = '\0';
+    machine->column--;
+    if(machine->column < 1){
+      machine->line--;
+      machine->column = machine->lastLineLength;
+    }
   }
 }
 
