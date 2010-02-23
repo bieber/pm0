@@ -150,6 +150,7 @@ int main(int argc, char* argv[]){
 | 600-699: Reserved words beginning with p
 | 700-799: Reserved words beginning with i
 | 800-899: Reserved words beginning with o
+| 900-999: Reserved words beginning with c
 ==========================
 */
 
@@ -187,6 +188,8 @@ int transition(DFA* this, char input){
         return 700;
       }else if(input == 'o'){
         return 800;
+      }else if(input == 'c'){
+        return 900;
       }else{
         return 1;
       }
@@ -524,6 +527,10 @@ int transition(DFA* this, char input){
       if(input == 'i'){
         this->accept = 1;
         return 109;
+      }else{
+        printf("Error: Invalid Identifier %s at (%d, %d)\n",
+               this->retVal.string, this->line, this->column);
+        rejectDFA(this);
       }
     }else{
         if(this->retVal.string[strlen(this->retVal.string)-1] == '\n')
@@ -536,7 +543,9 @@ int transition(DFA* this, char input){
   
   case 109: // Found i, finishing "snga'i" or looking for identifier
     if(isalnum(input)){
-      return 1;
+      printf("Error: Invalid Identifier %s at (%d, %d)\n",
+             this->retVal.string, this->line, this->column);
+      rejectDFA(this);
     }else{
       this->retVal.numeric = sngaisym;
       this->retVal.retString = 0;
@@ -1221,6 +1230,64 @@ int transition(DFA* this, char input){
       this->halt = 1;
     }
     break;
+
+  case 900: //Found a 'c', looking for "const"
+    if(input == 'o'){
+      return 901;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      this->accept = 1;
+      this->halt = 1;
+      this->retVal.retString = 1;
+    }
+    break;  
+
+  case 901:
+    if(input == 'n'){
+      return 902;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      this->accept = 1;
+      this->halt = 1;
+      this->retVal.retString = 1;
+    }
+    break;
+
+  case 902:
+    if(input == 's'){
+      return 903;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      this->accept = 1;
+      this->halt = 1;
+      this->retVal.retString = 1;
+    }
+    break;
+
+  case 903:
+    if(input == 't'){
+      return 904;
+    }else if(isalnum(input)){
+      return 1;
+    }else{
+      this->accept = 1;
+      this->halt = 1;
+      this->retVal.retString = 1;
+    }
+    break;
+    
+  case 904:
+    if(isalnum(input)){
+      return 1;
+    }else{
+      this->retVal.numeric = constsym;
+      this->retVal.retString = 0;
+      this->accept = 1;
+      this->halt = 1;
+    }
    
   }
     
