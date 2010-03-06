@@ -24,7 +24,7 @@ snga'i
 fpe'.
      a := x;  b:= y; z := 0;   
      tengkrr b > 0 si    
-     snga'i 
+     snga'i
         txo odd x tsakrr z := z+a;       
            a := 2*a; 
            b := b/2;     

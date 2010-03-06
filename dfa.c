@@ -22,6 +22,8 @@ void runDFA(DFA* machine, FILE* input){
     }
 
     //Appending the character
+    if(strlen(machine->retVal.string) > MAX_IDENT_LENGTH)
+      printf("%s\n", machine->retVal.string);
     machine->retVal.string[strlen(machine->retVal.string)+1] = '\0';
     machine->retVal.string[strlen(machine->retVal.string)] = inChar;
     //Running the machine

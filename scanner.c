@@ -278,7 +278,7 @@ int transition(DFA* this, char input){
     if(isalnum(input)){
       return 1;
     }else{
-      if(strlen(this->retVal.string) > MAX_IDENT_LENGTH){
+      if(strlen(this->retVal.string) > MAX_IDENT_LENGTH + 1){
        printf("Error: Identifier too long %s at (%d, %d)\n", 
               this->retVal.string, this->line, this->column);
        this->accept = 0;
@@ -340,6 +340,8 @@ int transition(DFA* this, char input){
     if(input == '*'){
       return 12;
     }else{
+      //Clearing the input string to avoid buffer overflow
+      this->retVal.string[1] = '\0';
       return 11;
     }
     break;
@@ -348,6 +350,7 @@ int transition(DFA* this, char input){
     if(input == '/'){
       this->halt = 1;
     }else if(input == '*'){
+      this->retVal.string[1] = '\0';
       return 12;
     }else{
       return 11;
