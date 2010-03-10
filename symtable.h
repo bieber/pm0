@@ -3,7 +3,7 @@
 
 #include "codes.h"
 
-#define SYMTABLE_SIZE 100
+#define SYMTABLE_SIZE 15
 
 //The symbol type enum
 typedef enum{
@@ -30,8 +30,12 @@ typedef struct symTableList{
 }symTableList;
 
 void insertSymbol(symTableList** table, symTableEntry* symbol);
-void findSymbol(symTableList** table, char* symbol, int scope);
+symTableEntry* findSymbol(symTableList** table, symType type,  char* symbol, 
+                          int scope);
 symTableList** newTable();
+symTableEntry* newSymbol(symType type, char* name, int scope, int value);
 int hash(char* symbol);
+
+void printStats(symTableList** table);
 
 #endif
