@@ -51,12 +51,14 @@ symTableList** newTable(){
   return table;
 }
 
-symTableEntry* newSymbol(symType type, char* name, int scope, int value){
+symTableEntry* newSymbol(symType type, char* name, int scope, int offset,
+                         int value){
 
   symTableEntry* symbol = (symTableEntry*)malloc(sizeof(symTableEntry));
   symbol->type = type;
   strcpy(symbol->name, name);
   symbol->scope = scope;
+  symbol->offset = offset;
   symbol->value = value;
 
   return symbol;

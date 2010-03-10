@@ -18,6 +18,7 @@ typedef struct{
   symType type;
   char name[MAX_IDENT_LENGTH + 1];
   int scope;
+  int offset;
   int value;
 
 } symTableEntry;
@@ -33,7 +34,8 @@ void insertSymbol(symTableList** table, symTableEntry* symbol);
 symTableEntry* findSymbol(symTableList** table, symType type,  char* symbol, 
                           int scope);
 symTableList** newTable();
-symTableEntry* newSymbol(symType type, char* name, int scope, int value);
+symTableEntry* newSymbol(symType type, char* name, int scope, int offset,
+                         int value);
 int hash(char* symbol);
 
 void printStats(symTableList** table);
