@@ -9,6 +9,9 @@
 #define MAX_IDENT_LENGTH 11
 #define MAX_NUMBER_LENGTH 5
 
+//Parser constants
+#define BASE_OFFSET 3
+
 //Opcodes
 typedef enum{
   LIT = 1,
