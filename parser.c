@@ -24,11 +24,21 @@ union{
 //The symbol table
 symTableList** symTable;
 
+//The code variables
+int pc = 0;
+instruction code[MAX_CODE_LENGTH];
+
 //----------------//
 /*================*/
 
 //Input function
 void readToken();
+
+//Code generation functions
+void genCode(opcode op, int l, int m);
+void backPatch(int location, opcode op, int l, int m);
+int genLabel();
+int reserveCode();
 
 //Non-terminal parsing functions
 void program();
@@ -365,4 +375,51 @@ void readToken(){
 
 void throwError(errorCode code){
   
+}
+
+void genCode(opcode op, int l, int m){
+
+  //Checking pc size for overflow
+  if(pc == MAX_CODE_LENGTH){
+    printf("ERROR: Code too long\n");
+    return;
+  }
+
+  //Inserting code and incrementing pc
+  code[pc].op = (int)op;
+  code[pc].l = l;
+  code[pc].m = m;
+  pc++;
+
+}
+
+void backPatch(int location, opcode op, int l, int m){
+  
+  if(location >= MAX_CODE_LENGTH){
+    printf("ERROR: Invalid code index\n");
+    return;
+  }
+
+  code[location].op = (int)op;
+  code[location].l = l;
+  code[location].m = m;
+
+}
+
+int genLabel(){
+
+  return pc;
+
+}
+
+int reserveCode(){
+  
+  //Checking to make sure we have room
+  if(pc >= MAX_CODE_LENGTH){
+    printf("ERROR: Code too long\n");
+    return -1;
+  }
+
+  return pc++;
+
 }
