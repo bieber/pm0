@@ -81,21 +81,6 @@ int main(int argc, char* argv[]){
   
 }
   
-/*void program(){
-  block();  
-}
-
-void block(){
-  while(currentToken != nulsym){
-    printf("%d\n", currentToken);
-    if(currentToken == identsym)
-      printf("%s\n", tokenVal.string);
-    if(currentToken == numbersym)
-      printf("%d\n", tokenVal.numeric);
-    readToken();
-  }
-}*/
-
 /***********************/
 /*  Grammar Functions  */
 /***********************/
