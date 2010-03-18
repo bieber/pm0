@@ -102,7 +102,7 @@ void program(){
   block();
   
   if(currentToken != periodsym)
-    printf("Period expected.\n");
+    throwError(PERIOD_EXPEC);
 }
 
 /***********************************************************/
@@ -118,21 +118,21 @@ void block(){
       readToken();
       
       if(currentToken != identsym)
-        printf("const must be followed by identifier.\n");
+        throwError(ID_FOLLOW_CONST);
     
       readToken();
       
       if(currentToken != eqsym){
         if(currentToken == becomessym)
-          printf("Use = instead of :=.\n");
+          throwError(EQ_NOT_BECOMES);
         else
-          printf("Identifier must be followed by =.\n");
+          throwError(EQ_FOLLOW_ID);
       }
       
       readToken();
     
       if(currentToken != numbersym)
-        printf("= must be followed by a number.\n");
+        throwError(NUM_FOLLOW_EQ);
     
       readToken();
     }while(currentToken == commasym);
@@ -140,7 +140,7 @@ void block(){
     readToken();
     
     if(currentToken != semicolonsym)
-      printf("Semicolon missing after const-declaration.\n");
+      throwError(SEMICOL_COMMA_MISS);
   }
   
   if(currentToken == intsym){
@@ -151,13 +151,13 @@ void block(){
       readToken();
       
       if(currentToken != identsym)
-        printf("var must be followed by identifier.\n");
+        throwError(ID_FOLLOW_VAR);
         
       readToken();
     }while(currentToken == commasym);
     
     if(currentToken != semicolonsym)
-      printf("Semicolon missing after var-declaration.\n");
+      throwError(SEMICOL_COMMA_MISS);
       
     readToken();
   }
@@ -169,19 +169,19 @@ void block(){
     readToken();
     
     if(currentToken != identsym)
-      printf("procedure must be followed by identifier.\n");
+      throwError(ID_FOLLOW_PROC);
     
     readToken();
     
     if(currentToken != semicolonsym)
-      printf("Semicolon missing in procedure before block.\n");
+      throwError(SEMICOL_COMMA_MISS);
       
     readToken();
     
     block();
     
     if(currentToken != semicolonsym)
-      printf("Semicolon mission in procedure after block.\n");
+      throwError(SEMICOL_COMMA_MISS);
     
     readToken();
   }
@@ -216,7 +216,7 @@ void statement(){
     readToken();
     
     if(currentToken != identsym)
-      printf("syaw must be followed by an identifier.\n");
+      throwError(ID_FOLLOW_SYAW);
    
     readToken();
   }
@@ -232,7 +232,7 @@ void statement(){
     }
     
     if(currentToken != fpesym) // 'endsym'
-      printf("Incorrect symbol following statement\n");
+      throwError(WRONG_SYM_AFTER_STATE);
     
     readToken();
   }
@@ -242,7 +242,7 @@ void statement(){
     condition();
     
     if(currentToken != tsakrrsym) // 'thensym'
-      printf("tsakrr expected.\n");
+      throwError(TSAKRR_EXPEC);
     
     readToken();
     
@@ -254,7 +254,7 @@ void statement(){
     condition();
     
     if(currentToken != sisym) // 'dosym'
-      printf("si expected.\n");
+      throwError(SI_EXPEC);
     
     readToken();
       
@@ -286,7 +286,7 @@ void condition(){
         || currentToken != leqsym
         || currentToken != gtrsym
         || currentToken != geqsym)
-      printf("Relational operator expected\n");
+      throwError(REL_OP_EXPEC);
     
     readToken();
     
@@ -343,7 +343,7 @@ void factor(){
     expression();
     
     if(currentToken != rparentsym)
-      printf("Right parenthesis missing.\n");
+      throwError(RPAREN_MISS);
   }
   else
     printf("Error, from FACTOR, generic error\n");
@@ -374,7 +374,89 @@ void readToken(){
 }
 
 void throwError(errorCode code){
-  
+  switch(code){
+    case(EQ_NOT_BECOMES):
+      printf("Use = instead of :=.\n");
+      break;
+    case(NUM_FOLLOW_EQ):
+      printf("= must be followed by a number.\n");
+      break;
+    case(EQ_FOLLOW_ID):
+      printf("Identifier must be followed by a number.\n");
+      break;
+    case(ID_FOLLOW_CONST):
+      printf("const must be followed by identifier.\n");
+      break;
+    case(ID_FOLLOW_VAR):
+      printf("var must be followed by identifier.\n");
+      break;
+    case(ID_FOLLOW_PROC):
+      printf("procedure must be followed by identifier.\n");
+      break;
+    case(SEMICOL_COMMA_MISS):
+      printf("Semicolon or comma missing.\n");
+      break;
+    case(WRONG_SYM_AFTER_PROC):
+      printf("Incorrect symbol after procedure declaration.\n");
+      break;
+    case(STATEMENT_EXPEC):
+      printf("Statement expected.\n");
+      break;
+    case(WRONG_SYM_AFTER_STATE):
+      printf("Incorrect symbol after statement part in block.\n");
+      break;
+    case(PERIOD_EXPEC):
+      printf("Period expected.\n");
+      break;
+    case(SEMICOL_BW_STATE_MISS):
+      printf("Semicolon between statements missing.\n");
+      break;
+    case(UNDEC_ID):
+      printf("Undeclared identifier.\n");
+      break;
+    case(CANNOT_ASSIGN_TO_CONST_OR_PROC):
+      printf("Assignment to constant or procedure is not allowed.\n");
+      break;
+    case(ASSIGN_EXPEC):
+      printf("Assignment operator expected.\n");
+      break;
+    case(ID_FOLLOW_SYAW):
+      printf("syaw must be followed by an identifier.\n");
+      break;
+    case(CONST_OR_VAR_CALL_USELESS):
+      printf("Call of a constant or variable is meaningless.\n");
+      break;
+    case(TSAKRR_EXPEC):
+      printf("tsakrr expected.\n");
+      break;
+    case(SEMICOL_OR_RBRACK_EXPEC):
+      printf("Semicolon or } expected.\n");
+      break;
+    case(SI_EXPEC):
+      printf("si expected.\n");
+      break;
+    case(WRONG_SYM_FOLLOWING_STATE):
+      printf("Incorrect symbol following statement.\n");
+      break;
+    case(REL_OP_EXPEC):
+      printf("Relational operator expected.\n");
+      break;
+    case(EXP_CANNOT_CONTAIN_PROC_IDENT):
+      printf("Expression must not contain a procedure identifier.\n");
+      break;
+    case(RPAREN_MISS):
+      printf("Right parenthesis missing.\n");
+      break;
+    case(SYMBOL_CANNOT_PRECEDE_THIS_EXP):
+      printf("The preceding factor cannot begin with this symbol.\n");
+      break;
+    case(NUMBER_TOO_LARGE):
+      printf("This number is too large.\n");
+      break;
+    default:
+      printf("Improper error code.\n");
+      break;
+  }
 }
 
 void genCode(opcode op, int l, int m){
