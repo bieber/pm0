@@ -119,7 +119,7 @@ void block(){
     /*  const-declaration ::= [ "const" ident "=" number           */
     /*                                {"," ident "=" number} ";"]  */
     /***************************************************************/
-    while(currentToken != commasym){
+    do{
       readToken();
       
       if(currentToken != identsym)
@@ -140,7 +140,7 @@ void block(){
         printf("= must be followed by a number.\n");
     
       readToken();
-    }
+    }while(currentToken == commasym);
     
     readToken();
     
@@ -152,14 +152,14 @@ void block(){
     /*******************************************************/
     /*  var-declaration ::= ["int" ident {"," ident} ";"]  */
     /*******************************************************/
-    while(currentToken == commasym){
+    do{
       readToken();
       
       if(currentToken != identsym)
         printf("var must be followed by identifier.\n");
         
       readToken();
-    }
+    }while(currentToken == commasym);
     
     if(currentToken != semicolonsym)
       printf("Semicolon missing after var-declaration.\n");
