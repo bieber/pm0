@@ -23,6 +23,7 @@ union{
 
 //The symbol table
 symTableList** symTable;
+int scope = 0;
 
 //The code variables
 int pc = 0;
@@ -39,6 +40,7 @@ void genCode(opcode op, int l, int m);
 void backPatch(int location, opcode op, int l, int m);
 int genLabel();
 int reserveCode();
+void printCode();
 
 //Non-terminal parsing functions
 void program();
@@ -87,6 +89,9 @@ int main(int argc, char* argv[]){
   //Parsing the program
   program();
 
+  //Generating code
+  printCode();
+
   return 0;
   
 }
@@ -109,6 +114,11 @@ void program(){
 /*  block ::= const-declaration var-declaration statement  */
 /***********************************************************/
 void block(){
+
+  int numVars = 0;
+  scope++;
+  char tempSymbol[MAX_IDENT_LENGTH + 1];
+
   if(currentToken == constsym){
     /***************************************************************/
     /*  const-declaration ::= [ "const" ident "=" number           */
@@ -117,8 +127,11 @@ void block(){
     do{
       readToken();
       
-      if(currentToken != identsym)
+      if(currentToken != identsym){
         printf("const must be followed by identifier.\n");
+      }else{
+        strcpy(tempSymbol, tokenVal.string);
+      }
     
       readToken();
       
@@ -131,16 +144,20 @@ void block(){
       
       readToken();
     
-      if(currentToken != numbersym)
+      if(currentToken != numbersym){
         printf("= must be followed by a number.\n");
+      }else{
+        insertSymbol(symTable, newSymbol(CONST, tempSymbol, scope, 0, 
+                                         tokenVal.numeric));
+      }
     
       readToken();
     }while(currentToken == commasym);
     
-    readToken();
-    
     if(currentToken != semicolonsym)
       printf("Semicolon missing after const-declaration.\n");
+
+    readToken();
   }
   
   if(currentToken == intsym){
@@ -150,9 +167,12 @@ void block(){
     do{
       readToken();
       
-      if(currentToken != identsym)
+      if(currentToken != identsym){
         printf("var must be followed by identifier.\n");
-        
+      }else{
+        insertSymbol(symTable, newSymbol(VAR, tokenVal.string, 
+                                         scope, BASE_OFFSET + numVars++, 0));
+      }
       readToken();
     }while(currentToken == commasym);
     
@@ -186,6 +206,8 @@ void block(){
     readToken();
   }
   
+  genCode(INC, 0, BASE_OFFSET + numVars);
+
   statement();
   
   return;
@@ -202,7 +224,13 @@ void block(){
 /*               | e ]                                                        */
 /******************************************************************************/
 void statement(){
+  symTableEntry* symbol;
+
   if(currentToken == identsym){
+    symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
+    if(!symbol)
+      throwError(UNDEC_ID);
+
     readToken();
     
     if(currentToken != becomessym)
@@ -211,6 +239,8 @@ void statement(){
     readToken();
     
     expression();
+
+    genCode(STO, 0, symbol->offset);
   }
   else if(currentToken == syawsym){ // 'callsym'
     readToken();
@@ -281,11 +311,11 @@ void condition(){
     /*  rel-op ::= "="|"!="|"<"|"<="|">"|">="  */
     /*******************************************/
     if(currentToken != eqsym 
-        || currentToken != neqsym 
-        || currentToken != lessym
-        || currentToken != leqsym
-        || currentToken != gtrsym
-        || currentToken != geqsym)
+        && currentToken != neqsym 
+        && currentToken != lessym
+        && currentToken != leqsym
+        && currentToken != gtrsym
+        && currentToken != geqsym)
       printf("Relational operator expected\n");
     
     readToken();
@@ -300,17 +330,33 @@ void condition(){
 /*  expression ::= [ "+"|"-" ] term {("+"|"-") term}  */
 /******************************************************/
 void expression(){
+  int minus = 0; //A flag to negate the expression if we need to
+  token operator;
+
+  if(currentToken == minussym)
+    minus = 1;
+
   if(currentToken == plussym || currentToken == minussym)
     readToken();
     
   term();
   
   while(currentToken == plussym || currentToken == slashsym){
+    operator = currentToken;
+    
     readToken();
     
     term();
+
+    if(operator == plussym)
+      genCode(OPR, 0, ADD);
+    else if(operator == minussym)
+      genCode(OPR, 0, SUB);
   }
-  
+
+  if(minus)
+    genCode(OPR, 0, NEG);
+
   return;
 }
 
@@ -318,12 +364,20 @@ void expression(){
 /*  term ::= factor {("*"|"/") factor}  */
 /****************************************/
 void term(){
+  token tempToken;
   factor();
   
   while(currentToken == multsym || currentToken == slashsym){
+    tempToken = currentToken;
+
     readToken();
     
     factor();
+
+    if(tempToken == multsym)
+      genCode(OPR, 0, MUL);
+    else if(tempToken == slashsym)
+      genCode(OPR, 0, DIV);
   }
   
   return;
@@ -333,11 +387,26 @@ void term(){
 /*  factor ::= ident | number | "(" expression ")"  */
 /****************************************************/
 void factor(){
-  if(currentToken == identsym)
+  symTableEntry* symbol;
+  if(currentToken == identsym){
+    //First looking for a constant that matches
+    symbol = findSymbol(symTable, CONST, tokenVal.string, scope);
+    if(symbol){
+      genCode(LIT, 0, symbol->value);
+    }else{
+      //If that fails, looking for a variable
+      symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
+      if(symbol){
+        genCode(LOD, 0, symbol->offset);
+      }else{
+        throwError(UNDEC_ID);
+      }
+    }
     readToken();
-  else if(currentToken == numbersym)
+  }else if(currentToken == numbersym){
+    genCode(LIT, 0, tokenVal.numeric);
     readToken();
-  else if(currentToken == lparentsym){
+  }else if(currentToken == lparentsym){
     readToken();
     
     expression();
@@ -422,4 +491,11 @@ int reserveCode(){
 
   return pc++;
 
+}
+
+void printCode(){
+  
+  int i;
+  for(i = 0; i < pc; i++)
+    printf("%d %d %d\n", (int)code[i].op, code[i].l, code[i].m);
 }

@@ -32,7 +32,10 @@ symTableEntry* findSymbol(symTableList** table, symType type, char* symbol,
        && current->data->type == type)
       break;
 
-  return current->data;
+  if(current)
+    return current->data;
+  else
+    return NULL;
 
 }
 
