@@ -211,6 +211,8 @@ void block(){
 
   statement();
   
+  genCode(OPR, 0, RET);
+
   return;
 }
 
@@ -226,6 +228,7 @@ void block(){
 /******************************************************************************/
 void statement(){
   symTableEntry* symbol;
+  int tempLabels[2];
 
   if(currentToken == identsym){
     symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
@@ -280,16 +283,25 @@ void statement(){
     statement();
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
+
     readToken();
     
+    tempLabels[0] = genLabel(); //Jump back up to here at the end of the loop
+
     condition();
-    
+
+    tempLabels[1] = reserveCode(); //Stick the conditional jump here
+
     if(currentToken != sisym) // 'dosym'
       throwError(SI_EXPEC);
     
     readToken();
       
     statement();
+    
+    genCode(JMP, 0, tempLabels[0]);
+    backPatch(tempLabels[1], JPC, 0, genLabel());
+
   }
   
   return;
@@ -300,6 +312,8 @@ void statement(){
 /*                 | expression rel-op expression  */
 /***************************************************/
 void condition(){
+  token operation;
+
   if(currentToken == oddsym){
     readToken();
     
@@ -312,16 +326,35 @@ void condition(){
     /*  rel-op ::= "="|"!="|"<"|"<="|">"|">="  */
     /*******************************************/
     if(currentToken != eqsym 
-        && currentToken != neqsym 
-        && currentToken != lessym
-        && currentToken != leqsym
-        && currentToken != gtrsym
-        && currentToken != geqsym)
+       && currentToken != neqsym 
+       && currentToken != lessym
+       && currentToken != leqsym
+       && currentToken != gtrsym
+       && currentToken != geqsym){
+
       throwError(REL_OP_EXPEC);
+
+    }else{
+      operation = currentToken;
+    }
     
     readToken();
     
     expression();
+
+    if(operation == eqsym)
+      genCode(OPR, 0, EQL);
+    else if(operation == neqsym)
+      genCode(OPR, 0, NEQ);
+    else if(operation == lessym)
+      genCode(OPR, 0, LSS);
+    else if(operation == leqsym)
+      genCode(OPR, 0, LEQ);
+    else if(operation == gtrsym)
+      genCode(OPR, 0, GTR);
+    else if(operation == geqsym)
+      genCode(OPR, 0, GEQ);
+
   }
   
   return;

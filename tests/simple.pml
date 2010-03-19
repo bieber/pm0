@@ -1,6 +1,8 @@
-const z = 2 ;
+const z = 50;
 int x, y;
-snga'i	
-  x := 5;
-  y := 31 + x * z;
+snga'i
+    x := z;
+    tengkrr x > 0 si
+       x := x - 1
+    y := x;
 fpe' .
