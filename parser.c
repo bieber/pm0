@@ -263,6 +263,7 @@ void statement(){
       readToken();
       
       statement();
+
     }
     
     if(currentToken != fpesym) // 'endsym'
@@ -275,12 +276,16 @@ void statement(){
     
     condition();
     
+    tempLabels[0] = reserveCode(); //Conditional jump will go here
+
     if(currentToken != tsakrrsym) // 'thensym'
       throwError(TSAKRR_EXPEC);
     
     readToken();
     
     statement();
+
+    backPatch(tempLabels[0], JPC, 0, genLabel());
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
 
@@ -375,7 +380,7 @@ void expression(){
     
   term();
   
-  while(currentToken == plussym || currentToken == slashsym){
+  while(currentToken == plussym || currentToken == minussym){
     operator = currentToken;
     
     readToken();
