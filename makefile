@@ -1,4 +1,4 @@
-all: vm scanner parser
+all: vm scanner parser tokenprinter
 
 vm: codes.h vm.c
 	gcc -g -Wall -Wformat -Werror -o vm vm.c
@@ -14,3 +14,6 @@ parser: symtable.o parser.c
 
 symtable.o: symtable.h symtable.c
 	gcc -g -Wall -Wformat -Werror -c -o symtable.o symtable.c
+
+tokenprinter: tokenprinter.c
+	gcc -g -Wall -Wformat -Werror -o tokenprinter tokenprinter.c
