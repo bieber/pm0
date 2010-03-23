@@ -12,6 +12,43 @@ union{
   char string[MAX_IDENT_LENGTH + 1];
 } tokenVal;
 
+char* symbolName[] = {
+  "",
+  "nulsym",
+  "identsym",
+  "numbersym",
+  "plussym",
+  "minussym",
+  "multsym",
+  "slashsym",
+  "oddsym",
+  "eqlsym",
+  "neqsym",
+  "lessym",
+  "leqsym",
+  "gtrsym",
+  "geqsym",
+  "lparentsym",
+  "rparentsym",
+  "commasym",
+  "semicolonsym",
+  "periodsym",
+  "becomessym",
+  "snga'isym",
+  "fpe'sym",
+  "txosym",
+  "tsakrrsym",
+  "tengkrrsym",
+  "sisym",
+  "swaysym",
+  "constsym",
+  "intsym",
+  "procsym",
+  "wrrpsym",
+  "misym",
+  "txokefyawsym"
+};
+
 /*==============*/
 
 typedef struct tokenList{
@@ -125,10 +162,17 @@ int main(int argc, char* argv[]){
   printf("\n\n");
 
   //Now printing the symbolic representation
-
   for(current = head; current; current = current->next){
-    
+    printf("%s", symbolName[current->symbol]);
+    if(current->symbol == identsym)
+      printf(".%d ", indexFromName(symbols, current->string));
+    else if(current->symbol == numbersym)
+      printf(".%d ", current->numeric);
+    else
+      printf(" ");
   }
+
+  printf("\n");
 
   //Deleting the token list
   current = head;
