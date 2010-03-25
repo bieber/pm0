@@ -25,7 +25,7 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 			./scanner $inputFile
 		fi
 
-	elif [ $1 -eq "-p" ]; then
+	elif [ $1 = "-p" ]; then
 		if [ $# -eq 2 ]; then
 			if [ $2 = "-q" ]; then
 				echo "./parser -q $inputFile"
@@ -38,7 +38,7 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 			./parser $inputFile
 		fi
 
-	elif [ $1 -eq "-v" ]; then
+	elif [ $1 = "-v" ]; then
 		if [ $# -eq 2 ]; then
 			if [ $2 = "-q" ]; then
 				echo "./vm -q $inputFile"
@@ -51,7 +51,7 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 			./parser $inputFile
 		fi
 
-	elif [ $1 -eq "-c" ]; then
+	elif [ $1 = "-c" ]; then
 		if [ $# -eq 2 ]; then
 			if [ $2 = "-q" ]; then
 				echo "./scanner -q $inputFile | ./parser -q"
@@ -61,6 +61,8 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 			fi
 		else
 			echo "./scanner -q $inputFile | ./parser"
+			./scanner -q $inputFile | ./tokenprinter
+			echo ""
 			./scanner -q $inputFile | ./parser
 		fi
 	fi
