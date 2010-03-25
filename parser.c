@@ -1,47 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+ 
 #include "codes.h"
 #include "symtable.h"
-
+ 
 #define USAGE "Usage: parser [-q] infile"
-
+ 
 /*===============*/
 //---Globals-----//
-
+ 
 // I/O vars
 FILE* fin;
 int verbose = 1;
-
+ 
 //Parsing status vars
 token currentToken;
 union{
   int numeric;
   char string[MAX_IDENT_LENGTH + 1];
 } tokenVal;
-
+ 
 //The symbol table
 symTableList** symTable;
 int scope = 0;
-
+ 
 //The code variables
 int pc = 0;
 instruction code[MAX_CODE_LENGTH];
-
+ 
 //----------------//
 /*================*/
-
+ 
 //Input function
 void readToken();
-
+ 
 //Code generation functions
 void genCode(opcode op, int l, int m);
 void backPatch(int location, opcode op, int l, int m);
 int genLabel();
 int reserveCode();
 void printCode();
-
+ 
 //Non-terminal parsing functions
 void program();
 void block();
@@ -51,9 +51,9 @@ void expression();
 void term();
 void factor();
 void throwError(errorCode code);
-
+ 
 int main(int argc, char* argv[]){
-
+ 
   //Checking command-line arguments
   if(argc > 3){
     printf("%s\n", USAGE);
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]){
     verbose = 0;
     fin = fopen(argv[2], "r");
   }
-
+  
   //Initializing the symbol table
   symTable = newTable();
   
@@ -88,20 +88,22 @@ int main(int argc, char* argv[]){
   
   //Parsing the program
   program();
-
+ 
   //Generating code
   printCode();
+
+  //END:
 
   return 0;
   
 }
   
 /***********************/
-/*  Grammar Functions  */
+/* Grammar Functions   */
 /***********************/
-
+ 
 /***************************/
-/*  program ::= block "."  */
+/* program ::= block "."   */
 /***************************/
 void program(){
   block();
@@ -109,20 +111,20 @@ void program(){
   if(currentToken != periodsym)
     throwError(PERIOD_EXPEC);
 }
-
+ 
 /***********************************************************/
-/*  block ::= const-declaration var-declaration statement  */
+/* block ::= const-declaration var-declaration statement   */
 /***********************************************************/
 void block(){
-
+ 
   int numVars = 0;
   scope++;
   char tempSymbol[MAX_IDENT_LENGTH + 1];
-
+ 
   if(currentToken == constsym){
     /***************************************************************/
-    /*  const-declaration ::= [ "const" ident "=" number           */
-    /*                                {"," ident "=" number} ";"]  */
+    /* const-declaration ::= [ "const" ident "=" number            */
+    /*                               {"," ident "=" number} ";"]   */
     /***************************************************************/
     do{
       readToken();
@@ -132,7 +134,7 @@ void block(){
       }else{
         strcpy(tempSymbol, tokenVal.string);
       }
-
+ 
       readToken();
       
       if(currentToken != eqsym){
@@ -147,7 +149,7 @@ void block(){
       if(currentToken != numbersym){
         throwError(NUM_FOLLOW_EQ);
       }else{
-        insertSymbol(symTable, newSymbol(CONST, tempSymbol, scope, 0, 
+        insertSymbol(symTable, newSymbol(CONST, tempSymbol, scope, 0,
                                          tokenVal.numeric));
       }
     
@@ -156,13 +158,13 @@ void block(){
     
     if(currentToken != semicolonsym)
       throwError(SEMICOL_COMMA_MISS);
-
+ 
     readToken();
   }
   
   if(currentToken == intsym){
     /*******************************************************/
-    /*  var-declaration ::= ["int" ident {"," ident} ";"]  */
+    /* var-declaration ::= ["int" ident {"," ident} ";"] */
     /*******************************************************/
     do{
       readToken();
@@ -170,7 +172,7 @@ void block(){
       if(currentToken != identsym){
         throwError(ID_FOLLOW_VAR);
       }else{
-        insertSymbol(symTable, newSymbol(VAR, tokenVal.string, 
+        insertSymbol(symTable, newSymbol(VAR, tokenVal.string,
                                          scope, BASE_OFFSET + numVars++, 0));
       }
         
@@ -183,11 +185,11 @@ void block(){
     readToken();
   }
   
-  while(currentToken == procsym){
+  //while(currentToken == procsym){
     /**********************************************************************/
-    /*  proc-declaration ::= {"procedure" ident ";" block ";"} statement  */
+    /* proc-declaration ::= {"procedure" ident ";" block ";"} statement   */
     /**********************************************************************/
-    readToken();
+  /*  readToken();
     
     if(currentToken != identsym)
       throwError(ID_FOLLOW_PROC);
@@ -205,54 +207,46 @@ void block(){
       throwError(SEMICOL_COMMA_MISS);
     
     readToken();
-  }
+  }*/
   
   genCode(INC, 0, BASE_OFFSET + numVars);
-
+ 
   statement();
   
   genCode(OPR, 0, RET);
-
+ 
   return;
 }
-
+ 
 /******************************************************************************/
 /* statement ::= [ ident ":=" expression                                      */
-/*               | "syaw" ident                                               */
 /*               | "snga'i" statement {";" statement} "fpe'"                  */
 /*               | "txo" condition "tsakrr" statement ["txokefyaw" statement] */
 /*               | "tengkrr" condition "si" statement                         */
-/*               | "mi" ident                                                 */
-/*               | "wrrpa" ident                                              */
 /*               | e ]                                                        */
 /******************************************************************************/
 void statement(){
   symTableEntry* symbol;
   int tempLabels[2];
-
+ 
   if(currentToken == identsym){
     symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
     if(!symbol)
       throwError(UNDEC_ID);
-
+    
     readToken();
     
     if(currentToken != becomessym)
-      printf("Error, from STATEMENT, not becomessym\n");
-      
+      throwError(ASSIGN_EXPEC);
+    
+    if(symbol->type == CONST)
+      throwError(CANNOT_ASSIGN_TO_CONST_OR_PROC);
+    
     readToken();
     
     expression();
-
+ 
     genCode(STO, 0, symbol->offset);
-  }
-  else if(currentToken == syawsym){ // 'callsym'
-    readToken();
-    
-    if(currentToken != identsym)
-      throwError(ID_FOLLOW_SYAW);
-   
-    readToken();
   }
   else if(currentToken == sngaisym){ // 'beginsym'
     readToken();
@@ -263,13 +257,17 @@ void statement(){
       readToken();
       
       statement();
-
     }
-    
+      
     if(currentToken != fpesym) // 'endsym'
-      throwError(WRONG_SYM_AFTER_STATE);
+      //throwError(WRONG_SYM_AFTER_STATE);
+      throwError(SEMICOL_OR_RBRACK_EXPEC);
     
     readToken();
+    
+    if(currentToken == identsym || currentToken == sngaisym
+        || currentToken == txosym || currentToken == tengkrrsym)
+      throwError(SEMICOL_BW_STATE_MISS);
   }
   else if(currentToken == txosym){ // 'ifsym'
     readToken();
@@ -277,26 +275,26 @@ void statement(){
     condition();
     
     tempLabels[0] = reserveCode(); //Conditional jump will go here
-
+ 
     if(currentToken != tsakrrsym) // 'thensym'
       throwError(TSAKRR_EXPEC);
     
     readToken();
     
     statement();
-
+ 
     backPatch(tempLabels[0], JPC, 0, genLabel());
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
-
+ 
     readToken();
     
     tempLabels[0] = genLabel(); //Jump back up to here at the end of the loop
-
+ 
     condition();
-
+ 
     tempLabels[1] = reserveCode(); //Stick the conditional jump here
-
+ 
     if(currentToken != sisym) // 'dosym'
       throwError(SI_EXPEC);
     
@@ -306,19 +304,20 @@ void statement(){
     
     genCode(JMP, 0, tempLabels[0]);
     backPatch(tempLabels[1], JPC, 0, genLabel());
-
   }
+  else
+    throwError(STATEMENT_EXPEC);
   
   return;
 }
-
+ 
 /***************************************************/
-/*  condition ::= "odd" expression                 */
-/*                 | expression rel-op expression  */
+/* condition ::= "odd" expression                  */
+/*               | expression rel-op expression    */
 /***************************************************/
 void condition(){
   token operation;
-
+ 
   if(currentToken == oddsym){
     readToken();
     
@@ -328,17 +327,17 @@ void condition(){
     expression();
     
     /*******************************************/
-    /*  rel-op ::= "="|"!="|"<"|"<="|">"|">="  */
+    /* rel-op ::= "="|"!="|"<"|"<="|">"|">="   */
     /*******************************************/
-    if(currentToken != eqsym 
-       && currentToken != neqsym 
+    if(currentToken != eqsym
+       && currentToken != neqsym
        && currentToken != lessym
        && currentToken != leqsym
        && currentToken != gtrsym
        && currentToken != geqsym){
-
+ 
       throwError(REL_OP_EXPEC);
-
+ 
     }else{
       operation = currentToken;
     }
@@ -346,7 +345,7 @@ void condition(){
     readToken();
     
     expression();
-
+ 
     if(operation == eqsym)
       genCode(OPR, 0, EQL);
     else if(operation == neqsym)
@@ -359,25 +358,30 @@ void condition(){
       genCode(OPR, 0, GTR);
     else if(operation == geqsym)
       genCode(OPR, 0, GEQ);
-
+ 
   }
   
   return;
 }
-
+ 
 /******************************************************/
-/*  expression ::= [ "+"|"-" ] term {("+"|"-") term}  */
+/* expression ::= [ "+"|"-" ] term {("+"|"-") term}   */
 /******************************************************/
 void expression(){
   int minus = 0; //A flag to negate the expression if we need to
   token operator;
-
+ 
   if(currentToken == minussym)
     minus = 1;
-
+ 
   if(currentToken == plussym || currentToken == minussym)
     readToken();
-    
+  else
+    throwError(SYMBOL_CANNOT_PRECEDE_THIS_EXP);
+  
+  if(currentToken == procsym)
+    throwError(EXP_CANNOT_CONTAIN_PROC_IDENT);
+  
   term();
   
   while(currentToken == plussym || currentToken == minussym){
@@ -385,22 +389,25 @@ void expression(){
     
     readToken();
     
+    if(currentToken == procsym)
+      throwError(EXP_CANNOT_CONTAIN_PROC_IDENT);
+    
     term();
-
+ 
     if(operator == plussym)
       genCode(OPR, 0, ADD);
     else if(operator == minussym)
       genCode(OPR, 0, SUB);
   }
-
+ 
   if(minus)
     genCode(OPR, 0, NEG);
-
+ 
   return;
 }
-
+ 
 /****************************************/
-/*  term ::= factor {("*"|"/") factor}  */
+/* term ::= factor {("*"|"/") factor}   */
 /****************************************/
 void term(){
   token tempToken;
@@ -408,11 +415,11 @@ void term(){
   
   while(currentToken == multsym || currentToken == slashsym){
     tempToken = currentToken;
-
+ 
     readToken();
     
     factor();
-
+ 
     if(tempToken == multsym)
       genCode(OPR, 0, MUL);
     else if(tempToken == slashsym)
@@ -421,9 +428,9 @@ void term(){
   
   return;
 }
-
+ 
 /****************************************************/
-/*  factor ::= ident | number | "(" expression ")"  */
+/* factor ::= ident | number | "(" expression ")"   */
 /****************************************************/
 void factor(){
   symTableEntry* symbol;
@@ -458,7 +465,7 @@ void factor(){
   
   return;
 }
-
+ 
 void readToken(){
   
   //Making sure we still have input to read
@@ -466,142 +473,143 @@ void readToken(){
     currentToken = nulsym;
     return;
   }
-
+ 
   //Reading the new token in
   fscanf(fin, "%d ", (int*)(&currentToken));
-
+ 
   //Checking to see if we need to read anything else in
   if(currentToken == identsym){
     fscanf(fin, "%s ", tokenVal.string);
   }
-
+ 
   if(currentToken == numbersym){
     fscanf(fin, "%d ", &tokenVal.numeric);
   }
-
+ 
 }
-
+ 
 void throwError(errorCode code){
   switch(code){
-    case(EQ_NOT_BECOMES):
+    case(EQ_NOT_BECOMES): // Used
       printf("Use = instead of :=.\n");
       break;
-    case(NUM_FOLLOW_EQ):
+    case(NUM_FOLLOW_EQ): // Used
       printf("= must be followed by a number.\n");
       break;
-    case(EQ_FOLLOW_ID):
+    case(EQ_FOLLOW_ID): // Used
       printf("Identifier must be followed by a number.\n");
       break;
-    case(ID_FOLLOW_CONST):
+    case(ID_FOLLOW_CONST): // Used
       printf("const must be followed by identifier.\n");
       break;
-    case(ID_FOLLOW_VAR):
+    case(ID_FOLLOW_VAR): // Used
       printf("var must be followed by identifier.\n");
       break;
-    case(ID_FOLLOW_PROC):
+    case(ID_FOLLOW_PROC): // NO
       printf("procedure must be followed by identifier.\n");
       break;
-    case(SEMICOL_COMMA_MISS):
+    case(SEMICOL_COMMA_MISS): // Used
       printf("Semicolon or comma missing.\n");
       break;
-    case(WRONG_SYM_AFTER_PROC):
+    case(WRONG_SYM_AFTER_PROC): // NO
       printf("Incorrect symbol after procedure declaration.\n");
       break;
-    case(STATEMENT_EXPEC):
+    case(STATEMENT_EXPEC): // Used
       printf("Statement expected.\n");
       break;
-    case(WRONG_SYM_AFTER_STATE):
+    case(WRONG_SYM_AFTER_STATE): // Used
       printf("Incorrect symbol after statement part in block.\n");
       break;
-    case(PERIOD_EXPEC):
+    case(PERIOD_EXPEC): // Used
       printf("Period expected.\n");
       break;
-    case(SEMICOL_BW_STATE_MISS):
+    case(SEMICOL_BW_STATE_MISS): // Used
       printf("Semicolon between statements missing.\n");
       break;
-    case(UNDEC_ID):
+    case(UNDEC_ID): // Used
       printf("Undeclared identifier.\n");
       break;
-    case(CANNOT_ASSIGN_TO_CONST_OR_PROC):
+    case(CANNOT_ASSIGN_TO_CONST_OR_PROC): // Used
       printf("Assignment to constant or procedure is not allowed.\n");
       break;
-    case(ASSIGN_EXPEC):
+    case(ASSIGN_EXPEC): // Used
       printf("Assignment operator expected.\n");
       break;
-    case(ID_FOLLOW_SYAW):
+    case(ID_FOLLOW_SYAW): // NO
       printf("syaw must be followed by an identifier.\n");
       break;
-    case(CONST_OR_VAR_CALL_USELESS):
+    case(CONST_OR_VAR_CALL_USELESS): // NO
       printf("Call of a constant or variable is meaningless.\n");
       break;
-    case(TSAKRR_EXPEC):
+    case(TSAKRR_EXPEC): // Used
       printf("tsakrr expected.\n");
       break;
-    case(SEMICOL_OR_RBRACK_EXPEC):
+    case(SEMICOL_OR_RBRACK_EXPEC): // Used
       printf("Semicolon or } expected.\n");
       break;
-    case(SI_EXPEC):
+    case(SI_EXPEC): // Used
       printf("si expected.\n");
       break;
-    case(WRONG_SYM_FOLLOWING_STATE):
+    case(WRONG_SYM_FOLLOWING_STATE): // Used parallel to SEMICOL_OR_RBRACK_EXPEC
       printf("Incorrect symbol following statement.\n");
       break;
-    case(REL_OP_EXPEC):
+    case(REL_OP_EXPEC): // Used
       printf("Relational operator expected.\n");
       break;
-    case(EXP_CANNOT_CONTAIN_PROC_IDENT):
+    case(EXP_CANNOT_CONTAIN_PROC_IDENT): // Used
       printf("Expression must not contain a procedure identifier.\n");
       break;
-    case(RPAREN_MISS):
+    case(RPAREN_MISS): // Used
       printf("Right parenthesis missing.\n");
       break;
-    case(SYMBOL_CANNOT_PRECEDE_THIS_EXP):
+    case(SYMBOL_CANNOT_PRECEDE_THIS_EXP): // Used
       printf("The preceding factor cannot begin with this symbol.\n");
       break;
-    case(NUMBER_TOO_LARGE):
+    case(NUMBER_TOO_LARGE): // NO?
       printf("This number is too large.\n");
       break;
     default:
       printf("Improper error code.\n");
       break;
   }
+  
 }
-
+ 
 void genCode(opcode op, int l, int m){
-
+ 
   //Checking pc size for overflow
   if(pc == MAX_CODE_LENGTH){
     printf("ERROR: Code too long\n");
     return;
   }
-
+ 
   //Inserting code and incrementing pc
   code[pc].op = (int)op;
   code[pc].l = l;
   code[pc].m = m;
   pc++;
-
+ 
 }
-
+ 
 void backPatch(int location, opcode op, int l, int m){
   
   if(location >= MAX_CODE_LENGTH){
     printf("ERROR: Invalid code index\n");
     return;
   }
-
+ 
   code[location].op = (int)op;
   code[location].l = l;
   code[location].m = m;
-
+ 
 }
-
+ 
 int genLabel(){
-
+ 
   return pc;
-
+ 
 }
-
+ 
 int reserveCode(){
   
   //Checking to make sure we have room
@@ -609,14 +617,15 @@ int reserveCode(){
     printf("ERROR: Code too long\n");
     return -1;
   }
-
+ 
   return pc++;
-
+ 
 }
-
+ 
 void printCode(){
   
   int i;
   for(i = 0; i < pc; i++)
     printf("%d %d %d\n", (int)code[i].op, code[i].l, code[i].m);
 }
+ 
