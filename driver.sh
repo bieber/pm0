@@ -63,6 +63,8 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 			echo "./scanner -q $inputFile | ./parser"
 			./scanner -q $inputFile | ./tokenprinter
 			echo ""
+			cat $inputFile
+			echo ""
 			./scanner -q $inputFile | ./parser
 		fi
 	fi
