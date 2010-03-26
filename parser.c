@@ -286,8 +286,12 @@ void statement(){
   else if(currentToken == fpesym){
     return;
   }
-  else
-    throwError(STATEMENT_EXPEC);
+  else{
+    if(currentToken == periodsym)
+      throwError(RBRACK_BEFORE_END);
+    else
+      throwError(STATEMENT_EXPEC);
+  }
   
   return;
 }
@@ -442,7 +446,7 @@ void factor(){
       throwError(RPAREN_MISS);
   }
   else
-    printf("Error, from FACTOR, generic error\n");
+    throwError(IDENT_NUM_OR_LPAREN_MISS);
   
   return;
 }
@@ -548,6 +552,12 @@ void throwError(errorCode code){
       break;
     case(NUMBER_TOO_LARGE): // NO?
       printf("This number is too large.\n");
+      break;
+    case(RBRACK_BEFORE_END): // Extra error code
+      printf("} expected before the end of the program.\n");
+      break;
+    case(IDENT_NUM_OR_LPAREN_MISS): // Another extra error code
+      printf("Variable, number, or '(' expected in statement.\n");
       break;
     default:
       printf("Improper error code.\n");
