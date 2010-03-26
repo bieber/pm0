@@ -78,3 +78,19 @@ void printStats(symTableList** table){
     printf("\n");
   }
 }
+
+void deleteTable(symTableList** table){
+  
+  symTableList* current;
+  symTableList* temp;
+  int i;
+  for(i = 0; i < SYMTABLE_SIZE; i++){
+    current = table[i];
+    while(current){
+      temp = current->next;
+      free(current);
+      current = temp;
+    }
+  }
+
+}

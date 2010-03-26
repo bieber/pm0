@@ -34,6 +34,7 @@ void insertSymbol(symTableList** table, symTableEntry* symbol);
 symTableEntry* findSymbol(symTableList** table, symType type,  char* symbol, 
                           int scope);
 symTableList** newTable();
+void deleteTable(symTableList** table);
 symTableEntry* newSymbol(symType type, char* name, int scope, int offset,
                          int value);
 int hash(char* symbol);

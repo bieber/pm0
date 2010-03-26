@@ -95,6 +95,8 @@ int main(int argc, char* argv[]){
 
   //END:
 
+  deleteTable(symTable);
+
   return 0;
   
 }
@@ -131,7 +133,7 @@ void block(){
       readToken();
       
       if(currentToken != identsym){
-        throwError(ID_FOLLOW_CONST);
+        throwError(ID_FOLLOW_CONST_VAR_PROC);
       }else{
         strcpy(tempSymbol, tokenVal.string);
       }
@@ -171,7 +173,7 @@ void block(){
       readToken();
       
       if(currentToken != identsym){
-        throwError(ID_FOLLOW_VAR);
+        throwError(ID_FOLLOW_CONST_VAR_PROC);
       }else{
         insertSymbol(symTable, newSymbol(VAR, tokenVal.string,
                                          scope, BASE_OFFSET + numVars++, 0));
@@ -288,7 +290,7 @@ void statement(){
   }
   else{
     if(currentToken == periodsym)
-      throwError(RBRACK_BEFORE_END);
+      throwError(SEMICOL_OR_RBRACK_EXPEC);
     else
       throwError(STATEMENT_EXPEC);
   }
@@ -446,7 +448,7 @@ void factor(){
       throwError(RPAREN_MISS);
   }
   else
-    throwError(IDENT_NUM_OR_LPAREN_MISS);
+    throwError(PREC_FACTOR_CANNOT_BEGIN_SYM);
   
   return;
 }
@@ -474,6 +476,8 @@ void readToken(){
 }
  
 void throwError(errorCode code){
+  printf("Error #%d", code);
+
   switch(code){
     case(EQ_NOT_BECOMES): // Used
       printf("Use = instead of :=.\n");
@@ -484,14 +488,8 @@ void throwError(errorCode code){
     case(EQ_FOLLOW_ID): // Used
       printf("Identifier must be followed by a number.\n");
       break;
-    case(ID_FOLLOW_CONST): // Used
-      printf("const must be followed by identifier.\n");
-      break;
-    case(ID_FOLLOW_VAR): // Used
-      printf("var must be followed by identifier.\n");
-      break;
-    case(ID_FOLLOW_PROC): // NO
-      printf("procedure must be followed by identifier.\n");
+    case(ID_FOLLOW_CONST_VAR_PROC): // Used
+      printf("const, var, procedure must be followed by identifier.\n");
       break;
     case(SEMICOL_COMMA_MISS): // Used
       printf("Semicolon or comma missing.\n");
@@ -547,22 +545,17 @@ void throwError(errorCode code){
     case(RPAREN_MISS): // Used
       printf("Right parenthesis missing.\n");
       break;
-    case(SYMBOL_CANNOT_PRECEDE_THIS_EXP): // Used
+    case(PREC_FACTOR_CANNOT_BEGIN_SYM): // Used
       printf("The preceding factor cannot begin with this symbol.\n");
       break;
     case(NUMBER_TOO_LARGE): // NO?
       printf("This number is too large.\n");
       break;
-    case(RBRACK_BEFORE_END): // Extra error code
-      printf("} expected before the end of the program.\n");
-      break;
-    case(IDENT_NUM_OR_LPAREN_MISS): // Another extra error code
-      printf("Variable, number, or '(' expected in statement.\n");
-      break;
     default:
       printf("Improper error code.\n");
       break;
   }
+  deleteTable(symTable);
   abort();
 }
  
