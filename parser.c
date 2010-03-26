@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
  
 #include "codes.h"
 #include "symtable.h"
@@ -235,15 +236,16 @@ void statement(){
       statement();
     }
       
-    if(currentToken != fpesym) // 'endsym'
+    if(currentToken != fpesym && 
+        (currentToken != identsym && currentToken != sngaisym
+        && currentToken != txosym && currentToken != tengkrrsym)) // 'endsym'
       //throwError(WRONG_SYM_AFTER_STATE);
       throwError(SEMICOL_OR_RBRACK_EXPEC);
-    
-    readToken();
-    
-    if(currentToken == identsym || currentToken == sngaisym
+    else if(currentToken == identsym || currentToken == sngaisym
         || currentToken == txosym || currentToken == tengkrrsym)
       throwError(SEMICOL_BW_STATE_MISS);
+    
+    readToken();
   }
   else if(currentToken == txosym){ // 'ifsym'
     readToken();
@@ -280,6 +282,9 @@ void statement(){
     
     genCode(JMP, 0, tempLabels[0]);
     backPatch(tempLabels[1], JPC, 0, genLabel());
+  }
+  else if(currentToken == fpesym){
+    return;
   }
   else
     throwError(STATEMENT_EXPEC);
@@ -352,8 +357,8 @@ void expression(){
  
   if(currentToken == plussym || currentToken == minussym)
     readToken();
-  else
-    throwError(SYMBOL_CANNOT_PRECEDE_THIS_EXP);
+  //else
+  //  throwError(SYMBOL_CANNOT_PRECEDE_THIS_EXP);
   
   if(currentToken == procsym)
     throwError(EXP_CANNOT_CONTAIN_PROC_IDENT);
@@ -548,7 +553,7 @@ void throwError(errorCode code){
       printf("Improper error code.\n");
       break;
   }
-  
+  abort();
 }
  
 void genCode(opcode op, int l, int m){
