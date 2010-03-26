@@ -185,30 +185,6 @@ void block(){
     readToken();
   }
   
-  //while(currentToken == procsym){
-    /**********************************************************************/
-    /* proc-declaration ::= {"procedure" ident ";" block ";"} statement   */
-    /**********************************************************************/
-  /*  readToken();
-    
-    if(currentToken != identsym)
-      throwError(ID_FOLLOW_PROC);
-    
-    readToken();
-    
-    if(currentToken != semicolonsym)
-      throwError(SEMICOL_COMMA_MISS);
-      
-    readToken();
-    
-    block();
-    
-    if(currentToken != semicolonsym)
-      throwError(SEMICOL_COMMA_MISS);
-    
-    readToken();
-  }*/
-  
   genCode(INC, 0, BASE_OFFSET + numVars);
  
   statement();
