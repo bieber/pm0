@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
     
     //In case of error, skip output
     if(!machine.accept)
-      continue;
+      return -1;
 
     //If we get nulsym, skip output
     if(machine.retVal.numeric == nulsym)

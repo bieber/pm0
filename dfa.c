@@ -48,7 +48,7 @@ void initDFA(DFA* machine){
   machine->state = 0;
 
   machine->halt = 0;
-  machine->accept = 0;
+  machine->accept = 1;
   machine->rewind = 0;
 
   machine->retVal.retString = 0;
