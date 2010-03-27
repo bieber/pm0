@@ -55,17 +55,29 @@ elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
 		if [ $# -eq 2 ]; then
 			if [ $2 = "-q" ]; then
 				echo "./scanner -q $inputFile | ./parser -q"
-				./scanner -q $inputFile | ./parser -q
+				./scanner -q $inputFile > tempfile.txt
+				if [ $? -ne 0 ]; then
+					echo "Errors present in scanner output."
+					./scanner -q $inputFile
+				else
+					./parser -q < tempfile.txt
+				fi
 			else
 				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
 			fi
 		else
 			echo "./scanner -q $inputFile | ./parser"
-			./scanner -q $inputFile | ./tokenprinter
-			echo ""
-			cat $inputFile
-			echo ""
-			./scanner -q $inputFile | ./parser
+			./scanner -q $inputFile > tempfile.txt
+			if [ $? -ne 0 ]; then
+				echo "Errors present in the scanner output."
+				./scanner -q $inputFile
+			else
+				./tokenprinter < tempfile.txt
+				echo ""
+				cat $inputFile
+				echo ""
+				./scanner -q $inputFile | ./parser
+			fi
 		fi
 	fi
 else
