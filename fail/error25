@@ -9,3 +9,5 @@ snga'i
     y := x;
   
 fpe'.
+Error: Invalid numerical length at (1, 24)
+Scanner terminated with error
