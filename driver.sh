@@ -1,8 +1,6 @@
-echo -e "Input file: \c "
-read inputFile
-if [ $# -eq 0 ]; then
-	echo "./scanner -q $inputFile | ./parser -q > intermediate_code.txt"
-	./scanner -q $inputFile | ./parser -q > intermediate_code.txt
+if [ $# -eq 1 ]; then
+	echo "./scanner -q $1 | ./parser -q > intermediate_code.txt"
+	./scanner -q $1 | ./parser -q > intermediate_code.txt
 	echo "./vm intermediate_code.txt"
 	./vm intermediate_code.txt
 
@@ -11,75 +9,75 @@ if [ $# -eq 0 ]; then
 # "-v" = run the input file or stream through the virtual machine only
 # "-c [outfile]" = generate intermediate code to screen or outfile
 
-elif [ $# -gt 0 ] && [ $# -lt 3 ]; then
+elif [ $# -gt 1 ] && [ $# -lt 4 ]; then
 	if [ $1 = "-s" ]; then
-		if [ $# -eq 2 ]; then
+		if [ $# -eq 3 ]; then
 			if [ $2 = "-q" ]; then
-				echo "./scanner -q $inputFile"
+				echo "./scanner -q $3"
 				./scanner -q $inputFile
 			else
-				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
+				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 			fi
 		else
-			echo "./scanner $inputFile"
-			./scanner $inputFile
+			echo "./scanner $2"
+			./scanner $2
 		fi
 
 	elif [ $1 = "-p" ]; then
-		if [ $# -eq 2 ]; then
+		if [ $# -eq 3 ]; then
 			if [ $2 = "-q" ]; then
-				echo "./parser -q $inputFile"
-				./parser -q $inputFile
+				echo "./parser -q $3"
+				./parser -q $3
 			else
-				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
+				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 			fi
 		else
-			echo "./parser $inputFile"
-			./parser $inputFile
+			echo "./parser $2"
+			./parser $2
 		fi
 
 	elif [ $1 = "-v" ]; then
-		if [ $# -eq 2 ]; then
+		if [ $# -eq 3 ]; then
 			if [ $2 = "-q" ]; then
-				echo "./vm -q $inputFile"
-				./vm -q $inputFile
+				echo "./vm -q $3"
+				./vm -q $3
 			else
-				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
+				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 			fi
 		else
-			echo "./parser $inputFile"
-			./parser $inputFile
+			echo "./parser $2"
+			./parser $2
 		fi
 
 	elif [ $1 = "-c" ]; then
-		if [ $# -eq 2 ]; then
+		if [ $# -eq 3 ]; then
 			if [ $2 = "-q" ]; then
-				echo "./scanner -q $inputFile | ./parser -q"
-				./scanner -q $inputFile > tempfile.txt
+				echo "./scanner -q $3 | ./parser -q"
+				./scanner -q $3 > tempfile.txt
 				if [ $? -ne 0 ]; then
 					echo "Errors present in scanner output."
-					./scanner -q $inputFile
+					./scanner -q $3
 				else
 					./parser -q < tempfile.txt
 				fi
 			else
-				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
+				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 			fi
 		else
-			echo "./scanner -q $inputFile | ./parser"
-			./scanner -q $inputFile > tempfile.txt
+			echo "./scanner -q $2 | ./parser"
+			./scanner -q $2 > tempfile.txt
 			if [ $? -ne 0 ]; then
 				echo "Errors present in the scanner output."
-				./scanner -q $inputFile
+				./scanner -q $2
 			else
 				./tokenprinter < tempfile.txt
 				echo ""
-				cat $inputFile
+				cat $2
 				echo ""
-				./scanner -q $inputFile | ./parser
+				./scanner -q $2 | ./parser
 			fi
 		fi
 	fi
 else
-	echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q]"
+	echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 fi
