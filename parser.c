@@ -111,8 +111,12 @@ int main(int argc, char* argv[]){
 void program(){
   block();
   
-  if(currentToken != periodsym)
-    throwError(PERIOD_EXPEC);
+  if(currentToken != periodsym){
+    if(currentToken != nulsym)
+      throwError(WRONG_SYM_AFTER_STATE);
+    else
+      throwError(PERIOD_EXPEC);
+  }
 }
  
 /***********************************************************/
