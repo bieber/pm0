@@ -361,13 +361,16 @@ void expression(){
   int minus = 0; //A flag to negate the expression if we need to
   token operator;
  
+  if(currentToken != plussym && currentToken != minussym
+     && currentToken != lparentsym && currentToken != identsym
+     && currentToken != numbersym)
+    throwError(STATEMENT_EXPEC);
+
   if(currentToken == minussym)
     minus = 1;
  
   if(currentToken == plussym || currentToken == minussym)
     readToken();
-  //else
-  //  throwError(SYMBOL_CANNOT_PRECEDE_THIS_EXP);
   
   if(currentToken == procsym)
     throwError(EXP_CANNOT_CONTAIN_PROC_IDENT);

@@ -1,0 +1,19 @@
+const   z = a505;
+int x, y;
+snga'i
+    x := z;
+    txo x = (24 + 1) * 2  tsakrr
+    snga'i
+        txo x = z tsakrr
+            y := 10;
+        x := 5;
+    fpe';
+fpe' .
+
+28 2 1 9 2 2 18 29 2 3 17 2 4 18 21 2 3 20 2 1 18 23 2 3 9 15 3 24 4 3 1 16 6 3 2 24 21 23 2 3 9 2 1 24 2 4 20 3 10 18 2 3 20 3 5 18 22 18 22 19 
+
+constsym identsym.1 eqlsym identsym.2 semicolonsym intsym identsym.3 commasym identsym.4 semicolonsym snga'isym identsym.3 becomessym identsym.1 semicolonsym txosym identsym.3 eqlsym lparentsym numbersym.24 plussym numbersym.1 rparentsym multsym numbersym.2 tsakrrsym snga'isym txosym identsym.3 eqlsym identsym.1 tsakrrsym identsym.4 becomessym numbersym.10 semicolonsym identsym.3 becomessym numbersym.5 semicolonsym fpe'sym semicolonsym fpe'sym periodsym 
+
+Error #2: = must be followed by a number.
+Parser terminated with error
+
