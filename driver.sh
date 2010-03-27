@@ -64,17 +64,17 @@ elif [ $# -gt 1 ] && [ $# -lt 4 ]; then
 				echo "Error. Usage: ./driver.sh [-s/p/v/c] [-q] inputfile"
 			fi
 		else
-			echo "./scanner -q $2 | ./parser"
-			./scanner -q $2 > tempfile.txt
+			echo "./scanner -q $1 | ./parser"
+			./scanner -q $1 > tempfile.txt
 			if [ $? -ne 0 ]; then
 				echo "Errors present in the scanner output."
-				./scanner -q $2
+				./scanner -q $1
 			else
 				./tokenprinter < tempfile.txt
 				echo ""
-				cat $2
+				cat $1
 				echo ""
-				./scanner -q $2 | ./parser
+				./scanner -q $1 | ./parser
 			fi
 		fi
 	fi

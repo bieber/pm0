@@ -1,10 +1,11 @@
- const z = 50;
+const   z = 50;
 int x, y;
 snga'i
     x := z;
-    tengkrr x > 0 si
-    snga'i  
-        x := x - 1; y := z - x; 
+    txo x = (24 + 1) * 2 + tsakrr
+    snga'i
+        txo x = z tsakrr
+            y := 10;
+        x := 5;
     fpe';
-    y := x + 1;
 fpe' .

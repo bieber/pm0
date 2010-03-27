@@ -1,3 +1,40 @@
 #!/bin/bash
+    
+if [ $# -ne 1 ]; then
+    echo "Usage: compiler [inputfile]"
+    exit -1
+fi
+    
+tokens=`./scanner -q $1`
+
+if [ $? -ne 0 ]; then
+    echo $tokens
+    echo "Scanner terminated with error"
+    exit -1
+fi
+
+echo
+./scanner -q $1 | ./tokenprinter
+echo
+
+echo $tokens > tokentemp~~
+code=`./parser tokentemp~~`
+
+if [ $? -ne 0 ]; then
+    echo $code
+    echo "Parser terminated with error"
+    echo
+    rm tokentemp~~
+    exit -1
+fi
+
+echo "Compilation successful"
+echo $code > codetemp~~
+./vm codetemp~~
+echo
+
+rm tokentemp~~
+rm codetemp~~
 
 exit 0
+
