@@ -4,3 +4,4 @@ vm
 scanner
 parser
 tokenprinter
+intermediate_code.txt
