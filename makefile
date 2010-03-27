@@ -17,3 +17,6 @@ symtable.o: symtable.h symtable.c
 
 tokenprinter: tokenprinter.c
 	gcc -g -Wall -Wformat -Werror -o tokenprinter tokenprinter.c
+	
+clean:  
+	rm *.o vm scanner parser tokenprinter
