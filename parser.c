@@ -322,6 +322,9 @@ void condition(){
        && currentToken != leqsym
        && currentToken != gtrsym
        && currentToken != geqsym){
+
+      if(currentToken == becomessym)
+        throwError(EQ_NOT_BECOMES);
  
       throwError(REL_OP_EXPEC);
  
