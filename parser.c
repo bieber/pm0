@@ -446,6 +446,8 @@ void factor(){
     
     if(currentToken != rparentsym)
       throwError(RPAREN_MISS);
+    else
+      readToken();
   }
   else
     throwError(PREC_FACTOR_CANNOT_BEGIN_SYM);
