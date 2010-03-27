@@ -1,0 +1,8 @@
+We could not reproduce the following errors for the following reasons:
+
+6 - The tiny grammar does not allow procedure declarations
+14 - Same as above
+15 - Same as above
+19 - This error is equivalent to error #7
+21 - The tiny grammar does not include procedure identifiers
+

@@ -1,0 +1,19 @@
+const ;
+int x, y;
+snga'i
+    x := x+ z;
+    txo x = (24 + 1) * 2  tsakrr
+    snga'i
+        txo x = z tsakrr
+            y := 10;
+        x := 5;
+    fpe';
+fpe' .
+
+28 18 29 2 1 17 2 2 18 21 2 1 20 2 1 4 2 3 18 23 2 1 9 15 3 24 4 3 1 16 6 3 2 24 21 23 2 1 9 2 3 24 2 2 20 3 10 18 2 1 20 3 5 18 22 18 22 19 
+
+constsym semicolonsym intsym identsym.1 commasym identsym.2 semicolonsym snga'isym identsym.1 becomessym identsym.1 plussym identsym.3 semicolonsym txosym identsym.1 eqlsym lparentsym numbersym.24 plussym numbersym.1 rparentsym multsym numbersym.2 tsakrrsym snga'isym txosym identsym.1 eqlsym identsym.3 tsakrrsym identsym.2 becomessym numbersym.10 semicolonsym identsym.1 becomessym numbersym.5 semicolonsym fpe'sym semicolonsym fpe'sym periodsym 
+
+Error #4: const, var, procedure must be followed by identifier.
+Parser terminated with error
+

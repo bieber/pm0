@@ -111,8 +111,12 @@ int main(int argc, char* argv[]){
 void program(){
   block();
   
-  if(currentToken != periodsym)
-    throwError(PERIOD_EXPEC);
+  if(currentToken != periodsym){
+    if(currentToken != nulsym)
+      throwError(WRONG_SYM_AFTER_STATE);
+    else
+      throwError(PERIOD_EXPEC);
+  }
 }
  
 /***********************************************************/
@@ -210,8 +214,12 @@ void statement(){
  
   if(currentToken == identsym){
     symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
-    if(!symbol)
-      throwError(UNDEC_ID);
+    if(!symbol){
+      if(findSymbol(symTable, CONST, tokenVal.string, scope))
+        throwError(CANNOT_ASSIGN_TO_CONST_OR_PROC);
+      else
+        throwError(UNDEC_ID);
+    }
     
     readToken();
     
@@ -322,6 +330,9 @@ void condition(){
        && currentToken != leqsym
        && currentToken != gtrsym
        && currentToken != geqsym){
+
+      if(currentToken == becomessym)
+        throwError(EQ_NOT_BECOMES);
  
       throwError(REL_OP_EXPEC);
  
@@ -358,13 +369,16 @@ void expression(){
   int minus = 0; //A flag to negate the expression if we need to
   token operator;
  
+  if(currentToken != plussym && currentToken != minussym
+     && currentToken != lparentsym && currentToken != identsym
+     && currentToken != numbersym)
+    throwError(SYMBOL_CANNOT_BEGIN_THIS_EXP);
+
   if(currentToken == minussym)
     minus = 1;
  
   if(currentToken == plussym || currentToken == minussym)
     readToken();
-  //else
-  //  throwError(SYMBOL_CANNOT_PRECEDE_THIS_EXP);
   
   if(currentToken == procsym)
     throwError(EXP_CANNOT_CONTAIN_PROC_IDENT);
@@ -481,84 +495,87 @@ void throwError(errorCode code){
   printf("Error #%d: ", code);
 
   switch(code){
-    case(EQ_NOT_BECOMES): // Used
-      printf("Use = instead of :=.\n");
-      break;
-    case(NUM_FOLLOW_EQ): // Used
-      printf("= must be followed by a number.\n");
-      break;
-    case(EQ_FOLLOW_ID): // Used
-      printf("Identifier must be followed by a number.\n");
-      break;
-    case(ID_FOLLOW_CONST_VAR_PROC): // Used
-      printf("const, var, procedure must be followed by identifier.\n");
-      break;
-    case(SEMICOL_COMMA_MISS): // Used
-      printf("Semicolon or comma missing.\n");
-      break;
-    case(WRONG_SYM_AFTER_PROC): // NO
-      printf("Incorrect symbol after procedure declaration.\n");
-      break;
-    case(STATEMENT_EXPEC): // Used
-      printf("Statement expected.\n");
-      break;
-    case(WRONG_SYM_AFTER_STATE): // Used
-      printf("Incorrect symbol after statement part in block.\n");
-      break;
-    case(PERIOD_EXPEC): // Used
-      printf("Period expected.\n");
-      break;
-    case(SEMICOL_BW_STATE_MISS): // Used
-      printf("Semicolon between statements missing.\n");
-      break;
-    case(UNDEC_ID): // Used
-      printf("Undeclared identifier.\n");
-      break;
-    case(CANNOT_ASSIGN_TO_CONST_OR_PROC): // Used
-      printf("Assignment to constant or procedure is not allowed.\n");
-      break;
-    case(ASSIGN_EXPEC): // Used
-      printf("Assignment operator expected.\n");
-      break;
-    case(ID_FOLLOW_SYAW): // NO
-      printf("syaw must be followed by an identifier.\n");
-      break;
-    case(CONST_OR_VAR_CALL_USELESS): // NO
-      printf("Call of a constant or variable is meaningless.\n");
-      break;
-    case(TSAKRR_EXPEC): // Used
-      printf("tsakrr expected.\n");
-      break;
-    case(SEMICOL_OR_RBRACK_EXPEC): // Used
-      printf("Semicolon or } expected.\n");
-      break;
-    case(SI_EXPEC): // Used
-      printf("si expected.\n");
-      break;
-    case(WRONG_SYM_FOLLOWING_STATE): // Used parallel to SEMICOL_OR_RBRACK_EXPEC
-      printf("Incorrect symbol following statement.\n");
-      break;
-    case(REL_OP_EXPEC): // Used
-      printf("Relational operator expected.\n");
-      break;
-    case(EXP_CANNOT_CONTAIN_PROC_IDENT): // Used
-      printf("Expression must not contain a procedure identifier.\n");
-      break;
-    case(RPAREN_MISS): // Used
-      printf("Right parenthesis missing.\n");
-      break;
-    case(PREC_FACTOR_CANNOT_BEGIN_SYM): // Used
-      printf("The preceding factor cannot begin with this symbol.\n");
-      break;
-    case(NUMBER_TOO_LARGE): // NO?
-      printf("This number is too large.\n");
-      break;
-    case(RBRACK_EXPEC_AT_END):
-      printf("} expected at the end of the program.\n");
-      break;
-    default:
-      printf("Improper error code.\n");
-      break;
+  case(EQ_NOT_BECOMES): // Used
+    printf("Use = instead of :=.\n");
+    break;
+  case(NUM_FOLLOW_EQ): // Used
+    printf("= must be followed by a number.\n");
+    break;
+  case(EQ_FOLLOW_ID): // Used
+    printf("Identifier must be followed by a number.\n");
+    break;
+  case(ID_FOLLOW_CONST_VAR_PROC): // Used
+    printf("const, var, procedure must be followed by identifier.\n");
+    break;
+  case(SEMICOL_COMMA_MISS): // Used
+    printf("Semicolon or comma missing.\n");
+    break;
+  case(WRONG_SYM_AFTER_PROC): // NO
+    printf("Incorrect symbol after procedure declaration.\n");
+    break;
+  case(STATEMENT_EXPEC): // Used
+    printf("Statement expected.\n");
+    break;
+  case(WRONG_SYM_AFTER_STATE): // Used
+    printf("Incorrect symbol after statement part in block.\n");
+    break;
+  case(PERIOD_EXPEC): // Used
+    printf("Period expected.\n");
+    break;
+  case(SEMICOL_BW_STATE_MISS): // Used
+    printf("Semicolon between statements missing.\n");
+    break;
+  case(UNDEC_ID): // Used
+    printf("Undeclared identifier.\n");
+    break;
+  case(CANNOT_ASSIGN_TO_CONST_OR_PROC): // Used
+    printf("Assignment to constant or procedure is not allowed.\n");
+    break;
+  case(ASSIGN_EXPEC): // Used
+    printf("Assignment operator expected.\n");
+    break;
+  case(ID_FOLLOW_SYAW): // NO
+    printf("syaw must be followed by an identifier.\n");
+    break;
+  case(CONST_OR_VAR_CALL_USELESS): // NO
+    printf("Call of a constant or variable is meaningless.\n");
+    break;
+  case(TSAKRR_EXPEC): // Used
+    printf("tsakrr expected.\n");
+    break;
+  case(SEMICOL_OR_RBRACK_EXPEC): // Used
+    printf("Semicolon or } expected.\n");
+    break;
+  case(SI_EXPEC): // Used
+    printf("si expected.\n");
+    break;
+  case(WRONG_SYM_FOLLOWING_STATE): // Used parallel to SEMICOL_OR_RBRACK_EXPEC
+    printf("Incorrect symbol following statement.\n");
+    break;
+  case(REL_OP_EXPEC): // Used
+    printf("Relational operator expected.\n");
+    break;
+  case(EXP_CANNOT_CONTAIN_PROC_IDENT): // Used
+    printf("Expression must not contain a procedure identifier.\n");
+    break;
+  case(RPAREN_MISS): // Used
+    printf("Right parenthesis missing.\n");
+    break;
+  case(PREC_FACTOR_CANNOT_BEGIN_SYM): // Used
+    printf("The preceding factor cannot begin with this symbol.\n");
+    break;
+  case(SYMBOL_CANNOT_BEGIN_THIS_EXP):
+    printf("An expression cannot begin with this symbol.\n");
+    break;
+  case(NUMBER_TOO_LARGE): // NO?
+    printf("This number is too large.\n");
+    break;
+  case(RBRACK_EXPEC_AT_END):
+    printf("} expected at the end of the program.\n");
+    break;
+  default:
+    printf("Improper error code.\n");
+    break;
   }
   deleteTable(symTable);
   abort();
