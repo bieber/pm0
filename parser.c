@@ -290,7 +290,7 @@ void statement(){
   }
   else{
     if(currentToken == periodsym)
-      throwError(SEMICOL_OR_RBRACK_EXPEC);
+      throwError(RBRACK_EXPEC_AT_END);
     else
       throwError(STATEMENT_EXPEC);
   }
@@ -476,7 +476,7 @@ void readToken(){
 }
  
 void throwError(errorCode code){
-  printf("Error #%d", code);
+  printf("Error #%d: ", code);
 
   switch(code){
     case(EQ_NOT_BECOMES): // Used
@@ -550,6 +550,9 @@ void throwError(errorCode code){
       break;
     case(NUMBER_TOO_LARGE): // NO?
       printf("This number is too large.\n");
+      break;
+    case(RBRACK_EXPEC_AT_END):
+      printf("} expected at the end of the program.\n");
       break;
     default:
       printf("Improper error code.\n");
