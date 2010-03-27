@@ -214,8 +214,12 @@ void statement(){
  
   if(currentToken == identsym){
     symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
-    if(!symbol)
-      throwError(UNDEC_ID);
+    if(!symbol){
+      if(findSymbol(symTable, CONST, tokenVal.string, scope))
+        throwError(CANNOT_ASSIGN_TO_CONST_OR_PROC);
+      else
+        throwError(UNDEC_ID);
+    }
     
     readToken();
     

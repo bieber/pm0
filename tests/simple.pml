@@ -5,5 +5,7 @@ snga'i
     txo x = z tsakrr
         y := 2;
         
+    z := 5;
+        
     
-fpe' 5.
+fpe'.

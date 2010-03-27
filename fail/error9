@@ -1,0 +1,17 @@
+const z = 3 ;
+int x, y;
+snga'i
+    x := z;
+    txo x = z tsakrr
+        y := 2;
+        
+    
+fpe'
+
+28 2 1 9 3 3 18 29 2 2 17 2 3 18 21 2 2 20 2 1 18 23 2 2 9 2 1 24 2 3 20 3 2 18 22 
+
+constsym identsym.1 eqlsym numbersym.3 semicolonsym intsym identsym.2 commasym identsym.3 semicolonsym snga'isym identsym.2 becomessym identsym.1 semicolonsym txosym identsym.2 eqlsym identsym.1 tsakrrsym identsym.3 becomessym numbersym.2 semicolonsym fpe'sym 
+
+Error #9: Period expected.
+Parser terminated with error
+
