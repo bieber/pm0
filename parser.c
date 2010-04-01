@@ -317,6 +317,8 @@ void condition(){
     readToken();
     
     expression();
+
+    genCode(OPR, 0, ODD);
   }
   else{
     expression();
