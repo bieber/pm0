@@ -14,6 +14,7 @@
 // I/O vars
 FILE* fin;
 int verbose = 1;
+int tokenNum = 0;
  
 //Parsing status vars
 token currentToken;
@@ -123,9 +124,11 @@ void program(){
 /* block ::= const-declaration var-declaration statement   */
 /***********************************************************/
 void block(){
- 
+
+  int jmpLoc = reserveCode();
+
+  int thisScope;
   int numVars = 0;
-  scope++;
   char tempSymbol[MAX_IDENT_LENGTH + 1];
  
   if(currentToken == constsym){
@@ -192,6 +195,9 @@ void block(){
     readToken();
   }
   
+  //Saving the scope before moving into procedure declarations
+  thisScope = scope;
+
   while(currentToken == procsym){
     /**********************************************************************/
     /* proc-declaration ::= {"procedure" ident ";" block ";"} statement   */
@@ -208,6 +214,8 @@ void block(){
       
     readToken();
     
+    scope++;
+
     block();
     
     if(currentToken != semicolonsym)
@@ -215,7 +223,11 @@ void block(){
     
     readToken();
   }
-  
+
+  //Restoring the scope
+  scope = thisScope;
+
+  backPatch(jmpLoc, JMP, 0, genLabel());
   genCode(INC, 0, BASE_OFFSET + numVars);
  
   statement();
@@ -525,11 +537,13 @@ void readToken(){
   if(currentToken == numbersym){
     fscanf(fin, "%d ", &tokenVal.numeric);
   }
+
+  tokenNum++;
  
 }
  
 void throwError(errorCode code){
-  printf("Error #%d: ", code);
+  printf("Error #%d at token %d: ", code, tokenNum);
 
   switch(code){
   case(EQ_NOT_BECOMES): // Used
