@@ -422,6 +422,9 @@ void expression(){
   
   term();
   
+  if(minus)
+    genCode(OPR, 0, NEG);
+
   while(currentToken == plussym || currentToken == minussym){
     operator = currentToken;
     
@@ -437,9 +440,6 @@ void expression(){
     else if(operator == minussym)
       genCode(OPR, 0, SUB);
   }
- 
-  if(minus)
-    genCode(OPR, 0, NEG);
  
   return;
 }

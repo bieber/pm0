@@ -1,0 +1,12 @@
+const x = 4, y = 3;
+int a, b, c;
+snga'i
+                a := x - y; /* a=1 */
+                b := a * x + y; /* b=7 */
+                c := x / a * (b + y); /* c=40 */
+                txo c > (a+b) tsakrr
+                                c := 9; /* c=9 */
+                txo odd c tsakrr
+                                c := -c + 5 * x - 3; /* c=8 */
+fpe'.
+
