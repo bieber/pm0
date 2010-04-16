@@ -30,12 +30,21 @@ int scope = 0;
 //The code variables
 int pc = 0;
 instruction code[MAX_CODE_LENGTH];
+
+//A disjoint set to keep track of the parenthood of scopes
+int scopeParent[MAX_CODE_LENGTH];
  
 //----------------//
 /*================*/
  
 //Input function
 void readToken();
+
+//Symbol table helper functions
+//findVar finds the l and m values for a variable, and stores them back to the
+//int*s you pass it
+int findVar(char* symbol, int scope, int* l, int* m);
+int findConst(char* symbol, int scope, int* m);
  
 //Code generation functions
 void genCode(opcode op, int l, int m);
@@ -56,6 +65,8 @@ void throwError(errorCode code);
  
 int main(int argc, char* argv[]){
  
+  int i;
+
   //Checking command-line arguments
   if(argc > 3){
     printf("%s\n", USAGE);
@@ -84,7 +95,11 @@ int main(int argc, char* argv[]){
   
   //Initializing the symbol table
   symTable = newTable();
-  
+
+  //Initializing the disjoint set for scopes
+  for(i = 0; i < MAX_CODE_LENGTH; i++)
+    scopeParent[i] = 0;
+
   //Fetching the first token
   readToken();
   
@@ -213,8 +228,11 @@ void block(){
       throwError(SEMICOL_COMMA_MISS);
       
     readToken();
-    
+
+    //Incrementing the scope for our new function and saving its parent
+    //in the disjoint set
     scope++;
+    scopeParent[scope] = thisScope;
 
     block();
     
@@ -248,13 +266,15 @@ void block(){
 /*               | e ]                                                        */
 /******************************************************************************/
 void statement(){
+  int l;
+  int m;
   symTableEntry* symbol;
   int tempLabels[2];
  
   if(currentToken == identsym){
     symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
-    if(!symbol){
-      if(findSymbol(symTable, CONST, tokenVal.string, scope))
+    if(!findVar(tokenVal.string, scope, &l, &m)){
+      if(findConst(tokenVal.string, scope, &m))
         throwError(CANNOT_ASSIGN_TO_CONST_OR_PROC);
       else
         throwError(UNDEC_ID);
@@ -265,14 +285,11 @@ void statement(){
     if(currentToken != becomessym)
       throwError(ASSIGN_EXPEC);
     
-    if(symbol->type == CONST)
-      throwError(CANNOT_ASSIGN_TO_CONST_OR_PROC);
-    
     readToken();
     
     expression();
  
-    genCode(STO, 0, symbol->offset);
+    genCode(STO, l, m);
   }
   else if(currentToken == syawsym){
     readToken();
@@ -483,20 +500,19 @@ void term(){
 /* factor ::= ident | number | "(" expression ")"   */
 /****************************************************/
 void factor(){
+  int l;
+  int m;
   symTableEntry* symbol;
   if(currentToken == identsym){
     //First looking for a constant that matches
     symbol = findSymbol(symTable, CONST, tokenVal.string, scope);
-    if(symbol){
-      genCode(LIT, 0, symbol->value);
-    }else{
+    if(findConst(tokenVal.string, scope, &m)){
+      genCode(LIT, 0, m);
+    }else if(findVar(tokenVal.string, scope, &l, &m)){
       //If that fails, looking for a variable
-      symbol = findSymbol(symTable, VAR, tokenVal.string, scope);
-      if(symbol){
-        genCode(LOD, 0, symbol->offset);
-      }else{
+        genCode(LOD, l, m);
+    }else{
         throwError(UNDEC_ID);
-      }
     }
     readToken();
   }else if(currentToken == numbersym){
@@ -686,3 +702,48 @@ void printCode(){
     printf("%d %d %d\n", (int)code[i].op, code[i].l, code[i].m);
 }
  
+int findVar(char* symbol, int scope, int* l, int* m){
+  
+  int level = 0;
+  symTableEntry* result = NULL;
+  
+  while(scope >= 0){
+    result = findSymbol(symTable, VAR, symbol, scope);
+    
+    if(result){
+      *l = level;
+      *m = result->offset;
+      return 1;
+    }else{
+      if(scope == 0)
+        return 0;
+      scope = scopeParent[scope];
+      level++;
+    }
+  }  
+
+  return 0;
+
+}
+
+int findConst(char* symbol, int scope, int* m){
+  
+  symTableEntry* result = NULL;
+
+  while(scope >= 0){
+    result = findSymbol(symTable, CONST, symbol, scope);
+
+    if(result){
+      *m = result->offset;
+      return 1;
+    }else{
+      if(scope == 0)
+        return 0;
+      scope = scopeParent[scope];
+    }
+
+  }
+
+  return 0;
+
+}
