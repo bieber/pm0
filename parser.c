@@ -192,6 +192,30 @@ void block(){
     readToken();
   }
   
+  while(currentToken == procsym){
+    /**********************************************************************/
+    /* proc-declaration ::= {"procedure" ident ";" block ";"} statement   */
+    /**********************************************************************/
+    readToken();
+    
+    if(currentToken != identsym)
+      throwError(ID_FOLLOW_CONST_VAR_PROC);
+    
+    readToken();
+    
+    if(currentToken != semicolonsym)
+      throwError(SEMICOL_COMMA_MISS);
+      
+    readToken();
+    
+    block();
+    
+    if(currentToken != semicolonsym)
+      throwError(WRONG_SYM_AFTER_PROC);
+    
+    readToken();
+  }
+  
   genCode(INC, 0, BASE_OFFSET + numVars);
  
   statement();
@@ -203,9 +227,12 @@ void block(){
  
 /******************************************************************************/
 /* statement ::= [ ident ":=" expression                                      */
+/*               | "sway" <ident>                                             */
 /*               | "snga'i" statement {";" statement} "fpe'"                  */
 /*               | "txo" condition "tsakrr" statement ["txokefyaw" statement] */
 /*               | "tengkrr" condition "si" statement                         */
+/*               | "mi" <ident>                                               */
+/*               | "wrrpa" <ident>                                            */
 /*               | e ]                                                        */
 /******************************************************************************/
 void statement(){
@@ -234,6 +261,14 @@ void statement(){
     expression();
  
     genCode(STO, 0, symbol->offset);
+  }
+  else if(currentToken == syawsym){
+    readToken();
+    
+    if(currentToken != identsym)
+      throwError(ID_FOLLOW_SYAW);
+    
+    readToken();
   }
   else if(currentToken == sngaisym){ // 'beginsym'
     readToken();
@@ -512,7 +547,7 @@ void throwError(errorCode code){
   case(SEMICOL_COMMA_MISS): // Used
     printf("Semicolon or comma missing.\n");
     break;
-  case(WRONG_SYM_AFTER_PROC): // NO
+  case(WRONG_SYM_AFTER_PROC): // Used
     printf("Incorrect symbol after procedure declaration.\n");
     break;
   case(STATEMENT_EXPEC): // Used
@@ -536,7 +571,7 @@ void throwError(errorCode code){
   case(ASSIGN_EXPEC): // Used
     printf("Assignment operator expected.\n");
     break;
-  case(ID_FOLLOW_SYAW): // NO
+  case(ID_FOLLOW_SYAW): // Used
     printf("syaw must be followed by an identifier.\n");
     break;
   case(CONST_OR_VAR_CALL_USELESS): // NO
