@@ -27,7 +27,7 @@ symTableEntry* findSymbol(symTableList** table, symType type, char* symbol,
   //Finding the matching symbol, or null
   symTableList* current;
   for(current = table[hash(symbol)]; current; current = current->next)
-    if(current->data->scope == scope
+    if((current->data->scope == scope || current->data->type == FUNC)
        && strcmp(current->data->name, symbol) == 0
        && current->data->type == type)
       break;

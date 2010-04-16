@@ -41,10 +41,11 @@ int scopeParent[MAX_CODE_LENGTH];
 void readToken();
 
 //Symbol table helper functions
-//findVar finds the l and m values for a variable, and stores them back to the
-//int*s you pass it
+//Each one will store results to the pointers provided, and return true or
+//false to indicate success or failure
 int findVar(char* symbol, int scope, int* l, int* m);
 int findConst(char* symbol, int scope, int* m);
+int findFunc(char* symbol, int scope, int* m);
  
 //Code generation functions
 void genCode(opcode op, int l, int m);
@@ -217,10 +218,16 @@ void block(){
     /**********************************************************************/
     /* proc-declaration ::= {"procedure" ident ";" block ";"} statement   */
     /**********************************************************************/
+
     readToken();
     
     if(currentToken != identsym)
       throwError(ID_FOLLOW_CONST_VAR_PROC);
+
+    //Storing the function name in the symbol table
+    insertSymbol(symTable, newSymbol(FUNC, tokenVal.string, thisScope, 
+                                     genLabel(), 0));
+
     
     readToken();
     
@@ -296,6 +303,11 @@ void statement(){
     
     if(currentToken != identsym)
       throwError(ID_FOLLOW_SYAW);
+
+    if(!findFunc(tokenVal.string, scope, &m))
+      throwError(UNDEC_ID);
+
+    genCode(CAL, 0, m);
     
     readToken();
   }
@@ -742,6 +754,21 @@ int findConst(char* symbol, int scope, int* m){
       scope = scopeParent[scope];
     }
 
+  }
+
+  return 0;
+
+}
+
+int findFunc(char* symbol, int scope, int* m){
+
+  symTableEntry* result = NULL;
+
+  result = findSymbol(symTable, FUNC, symbol, scope);
+
+  if(result){
+    *m = result->offset;
+    return 1;
   }
 
   return 0;

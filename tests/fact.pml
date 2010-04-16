@@ -1,11 +1,9 @@
-const x = 3;
 int f, n;
 procedure fact;
     int ans1;
     snga'i
-        ans1 := 3;
         ans1:=n;
-        n:= n-x;
+        n := n-1;
         txo n = 0 tsakrr f := 1;
         txo n > 0 tsakrr syaw fact;
         f:=f*ans1;
