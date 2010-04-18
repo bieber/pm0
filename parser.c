@@ -45,7 +45,7 @@ void readToken();
 //false to indicate success or failure
 int findVar(char* symbol, int scope, int* l, int* m);
 int findConst(char* symbol, int scope, int* m);
-int findFunc(char* symbol, int scope, int* m);
+int findFunc(char* symbol, int scope, int* l, int* m);
  
 //Code generation functions
 void genCode(opcode op, int l, int m);
@@ -304,10 +304,10 @@ void statement(){
     if(currentToken != identsym)
       throwError(ID_FOLLOW_SYAW);
 
-    if(!findFunc(tokenVal.string, scope, &m))
+    if(!findFunc(tokenVal.string, scope, &l, &m))
       throwError(UNDEC_ID);
 
-    genCode(CAL, 0, m);
+    genCode(CAL, l, m);
     
     readToken();
   }
@@ -382,7 +382,7 @@ void statement(){
       if(findVar(tokenVal.string, scope, &l, &m))
         genCode(STO, l, m);
       else if(findConst(tokenVal.string, scope, &m)
-           || findFunc(tokenVal.string, scope, &m))
+              || findFunc(tokenVal.string, scope, &l, &m))
         throwError(CANNOT_STORE_IN_CONST_OR_PROC);
       else
         throwError(UNDEC_ID);
@@ -800,7 +800,7 @@ int findConst(char* symbol, int scope, int* m){
 
 }
 
-int findFunc(char* symbol, int scope, int* m){
+int findFunc(char* symbol, int scope, int* l, int* m){
 
   symTableEntry* result = NULL;
 
@@ -808,6 +808,15 @@ int findFunc(char* symbol, int scope, int* m){
 
   if(result){
     *m = result->offset;
+    *l = 0;
+    return 1;
+  }
+
+  result = findSymbol(symTable, FUNC, symbol, scopeParent[scope]);
+
+  if(result){
+    *m = result->offset;
+    *l = 1;
     return 1;
   }
 
