@@ -348,6 +348,10 @@ void statement(){
     statement();
  
     backPatch(tempLabels[0], JPC, 0, genLabel());
+    
+    if(currentToken == txokefyawsym){
+      statement();
+    }
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
  
