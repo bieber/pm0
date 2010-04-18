@@ -116,6 +116,7 @@ typedef enum {
   SYMBOL_CANNOT_BEGIN_THIS_EXP = 24,
   NUMBER_TOO_LARGE = 25,
   RBRACK_EXPEC_AT_END = 26,
+  CANNOT_STORE_IN_CONST_OR_PROC = 27
 } errorCode;
 
 #endif

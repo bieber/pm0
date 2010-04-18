@@ -1,3 +1,4 @@
+const k = 2;
 int f, n;
 procedure fact;
     int ans1;
@@ -10,6 +11,7 @@ procedure fact;
     fpe';
 snga'i
     n:=3;
-    syaw fact;
-    /*wrrpa f ;*/
+    /*syaw fact;*/
+    mi f;
+    wrrpa k;
 fpe'.

@@ -264,7 +264,7 @@ void block(){
  
 /******************************************************************************/
 /* statement ::= [ ident ":=" expression                                      */
-/*               | "sway" <ident>                                             */
+/*               | "syaw" <ident>                                             */
 /*               | "snga'i" statement {";" statement} "fpe'"                  */
 /*               | "txo" condition "tsakrr" statement ["txokefyaw" statement] */
 /*               | "tengkrr" condition "si" statement                         */
@@ -368,6 +368,39 @@ void statement(){
     
     genCode(JMP, 0, tempLabels[0]);
     backPatch(tempLabels[1], JPC, 0, genLabel());
+  }
+  else if(currentToken == misym){ // Input
+    genCode(SIO, 0, 2);
+    
+    readToken();
+    
+    if(currentToken == identsym){
+      if(findVar(tokenVal.string, scope, &l, &m))
+        genCode(STO, l, m);
+      else if(findConst(tokenVal.string, scope, &m)
+           || findFunc(tokenVal.string, scope, &m))
+        throwError(CANNOT_STORE_IN_CONST_OR_PROC);
+      else
+        throwError(UNDEC_ID);
+      
+      readToken();
+    }
+  }
+  else if(currentToken == wrrpasym){ // Output
+    readToken();
+    
+    if(currentToken == identsym){
+      if(findVar(tokenVal.string, scope, &l, &m))
+        genCode(LOD, l, m);
+      else if(findConst(tokenVal.string, scope, &m))
+        genCode(LOD, l, m);
+      else
+        throwError(UNDEC_ID);
+      
+      readToken();
+    }
+    
+    genCode(SOI, 0, 1);
   }
   else if(currentToken == fpesym){
     return;
@@ -651,6 +684,9 @@ void throwError(errorCode code){
     break;
   case(RBRACK_EXPEC_AT_END):
     printf("} expected at the end of the program.\n");
+    break;
+  case(CANNOT_STORE_IN_CONST_OR_PROC):
+    printf("Cannot store a value in a constant or procedure.\n");
     break;
   default:
     printf("Improper error code.\n");
