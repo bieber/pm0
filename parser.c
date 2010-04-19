@@ -334,6 +334,8 @@ void statement(){
     readToken();
   }
   else if(currentToken == txosym){ // 'ifsym'
+    tempLabels[1] = 0;
+
     readToken();
     
     condition();
@@ -346,12 +348,17 @@ void statement(){
     readToken();
     
     statement();
+
+    if(currentToken == txokefyawsym)
+      tempLabels[1] = reserveCode();
  
     backPatch(tempLabels[0], JPC, 0, genLabel());
     
-    if(currentToken == txokefyawsym){
+    if(tempLabels[1]){
       statement();
+      backPatch(tempLabels[1], JMP, 0, genLabel());
     }
+
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
  

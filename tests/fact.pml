@@ -9,7 +9,7 @@ procedure fact;
         f:=f*ans1;
     fpe';
 snga'i
-    n:=6;
+    mi n;
     syaw fact;
     wrrpa f ;
 fpe'.
