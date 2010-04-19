@@ -503,5 +503,1147 @@ const x = 2;
 Statements
 \end_layout
 
+\begin_layout Standard
+A statement is a command that instructs the program to take an action, and
+ statements make up the functional parts of programs and procedures.
+ The main program and procedures both allow you to specify a single statement
+ to execute.
+ The following sections will list the types of statements you can use.
+\end_layout
+
+\begin_layout Subsection
+Assignment
+\end_layout
+
+\begin_layout Standard
+Assigning a new value to a variable is a common task.
+ The syntax to assign to a variable is 
+\begin_inset Quotes eld
+\end_inset
+
+<identifier> := <expression>
+\begin_inset Quotes erd
+\end_inset
+
+.
+ <identifier> can be the name of any variable that has been previously declared.
+ It can be either a local variable of the current procedure, or a local
+ variable of any procedure that the current procedure is a subprocedure
+ of.
+ If the same name is used at multiple levels, then the variable accessed
+ will be the one closest to the current procedure: first the compiler will
+ look for variables declared locally, then in the parent procedure, then
+ in its parent procedure, etc.
+ 
+\end_layout
+
+\begin_layout Standard
+<expression> can be any valid expresion.
+ Expressions will be discussed in more detail in section 2.7.
+ When an assignment statement is executed, the value of <expression> is
+ stored in the variable named by <identifier>
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Doubles the variable x */
+\end_layout
+
+\begin_layout Plain Layout
+
+x := 2 * x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Procedure Calls
+\end_layout
+
+\begin_layout Standard
+To execute a procedure, use the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+syaw <procedure>
+\begin_inset Quotes erd
+\end_inset
+
+, where <procedure> is the name of a procedure.
+ At any time, you can call any subprocedure of the current procedure, or
+ any procedure that has the same parent procedure as the current procedure.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Calls the function Z */
+\end_layout
+
+\begin_layout Plain Layout
+
+syaw Z
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Input
+\end_layout
+
+\begin_layout Standard
+To receive input from the user on the console, use the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+mi <identifier>
+\begin_inset Quotes erd
+\end_inset
+
+, where <identifier> is the name of any variable that can be accessed from
+ the current procedure (rules for variable access are the same for input
+ as they are for assignment).
+ When this statement is executed, the program will wait for the user to
+ enter a number at the terminal, and it will be stored in the variable named.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Gets input into the variable x */
+\end_layout
+
+\begin_layout Plain Layout
+
+mi x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Output
+\end_layout
+
+\begin_layout Standard
+To print output on the console, use the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+wrrpa <identifier>
+\begin_inset Quotes erd
+\end_inset
+
+, where <identifier> is the name of any variable that can be accessed from
+ the current procedure.
+ When this statement is executed, the program will print the value of the
+ variable to the console.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Prints the variable x */
+\end_layout
+
+\begin_layout Plain Layout
+
+wrrpa x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Conditional Execution
+\end_layout
+
+\begin_layout Standard
+Sometimes, you may wish to execute some statement only if some condition
+ is true.
+ For instance, you may want to decrease the value of a variable, but only
+ if it is currently greater than zero.
+ To accomplish this, you can use the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+txo <condition> tsakrr <statement>
+\begin_inset Quotes erd
+\end_inset
+
+, where <condition> is any valid conditional expression (conditionals will
+ be discussed in more detail in section 2.8) and <statement> is any valid
+ statement.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Decrease x if it is greater than 0 */
+\end_layout
+
+\begin_layout Plain Layout
+
+txo x > 0 tsakrr x := x - 1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+You may also specify a statement to execute if the condition is not met,
+ with the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+txo <condition> tsakrr <statement> txokefyaw <statement>
+\begin_inset Quotes erd
+\end_inset
+
+.
+ This syntax is the same as before, except that the second statement will
+ be executed if the condition is not met.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Decrease x if it is greater than 0 */
+\end_layout
+
+\begin_layout Plain Layout
+
+/* If x is less than 0 set it to 5 */
+\end_layout
+
+\begin_layout Plain Layout
+
+txo x > 0 tsakrr
+\end_layout
+
+\begin_layout Plain Layout
+
+	x := x - 1
+\end_layout
+
+\begin_layout Plain Layout
+
+txokefyaw
+\end_layout
+
+\begin_layout Plain Layout
+
+	x := 5
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Loops
+\end_layout
+
+\begin_layout Standard
+A loop allows you to repeat the same statement multiple times, as long as
+ some condition is true.
+ You can use the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+tengkrr <condition> si <statement>
+\begin_inset Quotes erd
+\end_inset
+
+ to do this, where <condition> is any valid conditional expression and <statemen
+t> is any valid statement.
+ The statement will be repeated over and over again until the condition
+ becomes false.
+ If the condition is false initially, then the statement will not be executed
+ at all.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Loop until x = 0 */
+\end_layout
+
+\begin_layout Plain Layout
+
+tengkrr x != 0 si
+\end_layout
+
+\begin_layout Plain Layout
+
+	x := x - 1
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Multiple Statements
+\end_layout
+
+\begin_layout Standard
+Usually, you will want to execute multiple statements at a time, rather
+ than just one.
+ The syntax to do this is 
+\begin_inset Quotes eld
+\end_inset
+
+snga'i [statements] fpe'
+\begin_inset Quotes erd
+\end_inset
+
+, where [statements] is any number of statements such that any statement
+ other than the first is preceded by a semicolon.
+ Note that the keywords 
+\begin_inset Quotes eld
+\end_inset
+
+snga'i
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+fpe'
+\begin_inset Quotes erd
+\end_inset
+
+ must be entered with the ASCII apostrophe character, not the Unicode right-sing
+le-quote character.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Display every number from 0 to 4 */
+\end_layout
+
+\begin_layout Plain Layout
+
+snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+  x := 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+  tengkrr x < 5 si
+\end_layout
+
+\begin_layout Plain Layout
+
+    snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+      wrrpa x;
+\end_layout
+
+\begin_layout Plain Layout
+
+      x := x + 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+    fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+fpe'
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Expressions
+\end_layout
+
+\begin_layout Standard
+When an expression is required, you may use any combination of variables,
+ constants, numbers, parenthesis, and the operators +, -, *, and / to form
+ a mathematical expression.
+ For instance, the expression 
+\begin_inset Quotes eld
+\end_inset
+
+x * 5 + y
+\begin_inset Quotes erd
+\end_inset
+
+ would evaluate to the value of x multiplied by five and added to the value
+ of y.
+ The * and / operators are always evaluated before the + and - operators,
+ and any parts of an expression in parenthesis are evaluated together.
+ This means that, for instance, 
+\begin_inset Quotes eld
+\end_inset
+
+(5 + 2) * 3
+\begin_inset Quotes erd
+\end_inset
+
+ will evaluate to 21, while 
+\begin_inset Quotes eld
+\end_inset
+
+5 + 2 * 3
+\begin_inset Quotes erd
+\end_inset
+
+ will evaluate to 11.
+ The operators that you can use are as follows.
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features booktabs="true">
+<column alignment="center" valignment="top" width="2in">
+<column alignment="center" valignment="top" width="2in">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Expression With Operator
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Result
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x + y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Evaluates to the value of x added to the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x - y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Evaluates to the value of y subtracted from the value of x
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x * y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Evaluates to the value of x multiplied by the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x / y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Evaluates to the whole number part of the value of x divided by the value
+ of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Sets x equal to three times the sum of it and y */
+\end_layout
+
+\begin_layout Plain Layout
+
+x := 3 * (x + y)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Conditionals
+\end_layout
+
+\begin_layout Standard
+Conditionals are expressions that are either true or false.
+ These may be statements of equality or inequality.
+ The syntax for a conditional is either 
+\begin_inset Quotes eld
+\end_inset
+
+<expression> <operator> <expression>
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+odd <expression>
+\begin_inset Quotes erd
+\end_inset
+
+, where <expression> can be any valid expression, and <operator> can be
+ any valid conditional operators.
+ If the 
+\begin_inset Quotes eld
+\end_inset
+
+odd
+\begin_inset Quotes erd
+\end_inset
+
+ keyword is used, the conditional will evaluate to true if the expression
+ evaluates to an odd number.
+ The operators you can use are as follows.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="2">
+<features booktabs="true">
+<column alignment="center" valignment="top" width="2in">
+<column alignment="center" valignment="top" width="2in">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Condition with Operator
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Evaluates True If
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x < y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is less than the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x <= y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is less than or equal to the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x > y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is greater than the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x >= y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is greater than or equal to the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x = y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is equal to the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+x != y
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+The value of x is not equal to the value of y
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace medskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Display every number from 0 to 4 */
+\end_layout
+
+\begin_layout Plain Layout
+
+snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+  x := 0;
+\end_layout
+
+\begin_layout Plain Layout
+
+  tengkrr x < 5 si
+\end_layout
+
+\begin_layout Plain Layout
+
+    snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+      wrrpa x;
+\end_layout
+
+\begin_layout Plain Layout
+
+      x := x + 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+    fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+fpe'
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Sample Programs
+\end_layout
+
+\begin_layout Section
+Recursive Factorial Program
+\end_layout
+
+\begin_layout Standard
+This program will compute the factorial of a number entered at the command
+ line using recursive procedure calls.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+int f, n; 
+\end_layout
+
+\begin_layout Plain Layout
+
+procedure fact;
+\end_layout
+
+\begin_layout Plain Layout
+
+    int ans1;
+\end_layout
+
+\begin_layout Plain Layout
+
+    snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+        ans1:=n;
+\end_layout
+
+\begin_layout Plain Layout
+
+        n:= n-1;
+\end_layout
+
+\begin_layout Plain Layout
+
+        txo n = 0 tsakrr f := 1;
+\end_layout
+
+\begin_layout Plain Layout
+
+        txo n > 0 tsakrr syaw fact;
+\end_layout
+
+\begin_layout Plain Layout
+
+        f:=f*ans1;
+\end_layout
+
+\begin_layout Plain Layout
+
+    fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+    mi n;
+\end_layout
+
+\begin_layout Plain Layout
+
+    syaw fact;
+\end_layout
+
+\begin_layout Plain Layout
+
+    wrrpa f;
+\end_layout
+
+\begin_layout Plain Layout
+
+fpe'.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Nested Procedure Program
+\end_layout
+
+\begin_layout Standard
+This program demonstrates the use of nested procedures.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+int x,y,z,v,w;
+\end_layout
+
+\begin_layout Plain Layout
+
+procedure a;
+\end_layout
+
+\begin_layout Plain Layout
+
+  int x,y,u,v;
+\end_layout
+
+\begin_layout Plain Layout
+
+  procedure b;
+\end_layout
+
+\begin_layout Plain Layout
+
+    int y,z,v;
+\end_layout
+
+\begin_layout Plain Layout
+
+    procedure c;
+\end_layout
+
+\begin_layout Plain Layout
+
+      int y,z;
+\end_layout
+
+\begin_layout Plain Layout
+
+      snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+        z:=1;
+\end_layout
+
+\begin_layout Plain Layout
+
+        x:=y+z+w
+\end_layout
+
+\begin_layout Plain Layout
+
+      fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+    snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+      y:=x+u+w;
+\end_layout
+
+\begin_layout Plain Layout
+
+      syaw c
+\end_layout
+
+\begin_layout Plain Layout
+
+    fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+  snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+    z:=2;
+\end_layout
+
+\begin_layout Plain Layout
+
+    u:=z+w;
+\end_layout
+
+\begin_layout Plain Layout
+
+    syaw b
+\end_layout
+
+\begin_layout Plain Layout
+
+  fpe';
+\end_layout
+
+\begin_layout Plain Layout
+
+snga'i
+\end_layout
+
+\begin_layout Plain Layout
+
+  x:=1; y:=2; z:=3; v:=4; w:=5;
+\end_layout
+
+\begin_layout Plain Layout
+
+  x:=v+w;
+\end_layout
+
+\begin_layout Plain Layout
+
+  wrrpa z;
+\end_layout
+
+\begin_layout Plain Layout
+
+  syaw a;
+\end_layout
+
+\begin_layout Plain Layout
+
+fpe'.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \end_body
 \end_document
