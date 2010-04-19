@@ -349,8 +349,10 @@ void statement(){
     
     statement();
 
-    if(currentToken == txokefyawsym)
+    if(currentToken == txokefyawsym){
       tempLabels[1] = reserveCode();
+      readToken();
+    }
  
     backPatch(tempLabels[0], JPC, 0, genLabel());
     
@@ -404,7 +406,7 @@ void statement(){
       if(findVar(tokenVal.string, scope, &l, &m))
         genCode(LOD, l, m);
       else if(findConst(tokenVal.string, scope, &m))
-        genCode(LOD, l, m);
+        genCode(LIT, 0, m);
       else
         throwError(UNDEC_ID);
       
@@ -793,7 +795,7 @@ int findConst(char* symbol, int scope, int* m){
     result = findSymbol(symTable, CONST, symbol, scope);
 
     if(result){
-      *m = result->offset;
+      *m = result->value;
       return 1;
     }else{
       if(scope == 0)
