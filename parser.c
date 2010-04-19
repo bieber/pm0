@@ -45,7 +45,7 @@ void readToken();
 //false to indicate success or failure
 int findVar(char* symbol, int scope, int* l, int* m);
 int findConst(char* symbol, int scope, int* m);
-int findFunc(char* symbol, int scope, int* m);
+int findFunc(char* symbol, int scope, int* l, int* m);
  
 //Code generation functions
 void genCode(opcode op, int l, int m);
@@ -304,10 +304,10 @@ void statement(){
     if(currentToken != identsym)
       throwError(ID_FOLLOW_SYAW);
 
-    if(!findFunc(tokenVal.string, scope, &m))
+    if(!findFunc(tokenVal.string, scope, &l, &m))
       throwError(UNDEC_ID);
 
-    genCode(CAL, 0, m);
+    genCode(CAL, l, m);
     
     readToken();
   }
@@ -334,6 +334,8 @@ void statement(){
     readToken();
   }
   else if(currentToken == txosym){ // 'ifsym'
+    tempLabels[1] = 0;
+
     readToken();
     
     condition();
@@ -346,12 +348,19 @@ void statement(){
     readToken();
     
     statement();
+
+    if(currentToken == txokefyawsym){
+      tempLabels[1] = reserveCode();
+      readToken();
+    }
  
     backPatch(tempLabels[0], JPC, 0, genLabel());
     
-    if(currentToken == txokefyawsym){
+    if(tempLabels[1]){
       statement();
+      backPatch(tempLabels[1], JMP, 0, genLabel());
     }
+
   }
   else if(currentToken == tengkrrsym){ // 'whilesym'
  
@@ -382,7 +391,7 @@ void statement(){
       if(findVar(tokenVal.string, scope, &l, &m))
         genCode(STO, l, m);
       else if(findConst(tokenVal.string, scope, &m)
-           || findFunc(tokenVal.string, scope, &m))
+              || findFunc(tokenVal.string, scope, &l, &m))
         throwError(CANNOT_STORE_IN_CONST_OR_PROC);
       else
         throwError(UNDEC_ID);
@@ -397,7 +406,7 @@ void statement(){
       if(findVar(tokenVal.string, scope, &l, &m))
         genCode(LOD, l, m);
       else if(findConst(tokenVal.string, scope, &m))
-        genCode(LOD, l, m);
+        genCode(LIT, 0, m);
       else
         throwError(UNDEC_ID);
       
@@ -786,7 +795,7 @@ int findConst(char* symbol, int scope, int* m){
     result = findSymbol(symTable, CONST, symbol, scope);
 
     if(result){
-      *m = result->offset;
+      *m = result->value;
       return 1;
     }else{
       if(scope == 0)
@@ -800,7 +809,7 @@ int findConst(char* symbol, int scope, int* m){
 
 }
 
-int findFunc(char* symbol, int scope, int* m){
+int findFunc(char* symbol, int scope, int* l, int* m){
 
   symTableEntry* result = NULL;
 
@@ -808,6 +817,15 @@ int findFunc(char* symbol, int scope, int* m){
 
   if(result){
     *m = result->offset;
+    *l = 0;
+    return 1;
+  }
+
+  result = findSymbol(symTable, FUNC, symbol, scopeParent[scope]);
+
+  if(result){
+    *m = result->offset;
+    *l = 1;
     return 1;
   }
 
