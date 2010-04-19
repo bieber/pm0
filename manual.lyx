@@ -1,0 +1,507 @@
+#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass book
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize letterpaper
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+NA'VI/PL Compiler User Manual
+\end_layout
+
+\begin_layout Author
+Paul Gatterdam, Robert Bieber
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter
+Setup
+\end_layout
+
+\begin_layout Section
+Compilation
+\end_layout
+
+\begin_layout Standard
+To compile the NA’VI/PL compiler, first navigate to the proper directory
+ within the computer system using the terminal by using the command “cd
+ directory” to navigate through each level of the computer’s file system
+ to get to the directory where the compiler was downloaded and stored.
+ When that directory is reached, use the command “make” to compile the compiler.
+ The GCC C compiler and a BASH compatible shell are required to compile
+ and run the NA'VI/PL compiler.
+\end_layout
+
+\begin_layout Section
+Execution
+\end_layout
+
+\begin_layout Standard
+To run the compiler, enter the command “./compiler inputfile”.
+ The compiler will then run the input file through the scanner first, then
+ the parser, and then will finally put the compiled program through the
+ virtual machine and run the program.
+ If any errors are encountered at any step of the process, the errors will
+ be displayed and the compiler will quit.
+ 
+\end_layout
+
+\begin_layout Standard
+Once the NA'VI/PL compiler is running, appropriate error messages will be
+ displayed after each part of the compiler is run if necessary.
+ The error messages are detailed enough that the error should be easily
+ understood and fixable in the code that was run through the compiler.
+ If no errors are encountered, the code will run to completion and display
+ the final assembly language program that is then interpreted by the virtual
+ machine.
+ Each step of the virtual machine and the contents of the program counter,
+ lexicographical level, offset, and the contents of the stack will also
+ be shown alongside each step in the execution of the assembly code program
+ that was generated 
+\end_layout
+
+\begin_layout Chapter
+The NA'VI/PL Language
+\end_layout
+
+\begin_layout Section
+Program Structure
+\end_layout
+
+\begin_layout Standard
+The structure of a NA'VI/PL program is as follows; each section of the program
+ will be explained in detail.
+ In this listing, the text contained within brackets is descriptive, not
+ actual code.
+ The bracketed parts are also optional.
+ Your program might, for instance, contain only constant declarations and
+ a statement: the other parts are not required.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Comments can be mixed throughout the program */
+\end_layout
+
+\begin_layout Plain Layout
+
+[constant declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[variable declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[procedure declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[statement].
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Comments
+\end_layout
+
+\begin_layout Standard
+You can include comments anywhere within your NA'VI/PL program.
+ A comment is any block of text that begins with the two-character sequence
+ 
+\begin_inset Quotes eld
+\end_inset
+
+/*
+\begin_inset Quotes erd
+\end_inset
+
+ and ends with the sequence 
+\begin_inset Quotes eld
+\end_inset
+
+*/
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The compiler will ignore any text in between these sequences, so you can
+ include whatever text you need to describe the function of your program
+ within them.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+a := 2; /* This stores the value 2 in the variable a */
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Constant Declarations
+\end_layout
+
+\begin_layout Standard
+A constant is a symbol that represents a number in your program.
+ A constant must be named, and you may use any valid identifier for this
+ purpose.
+ A valid identifier is a series of characters beginning with a letter and
+ containing only letters and numbers that is not a reserved word.
+ Examples of valid identifiers are 
+\begin_inset Quotes eld
+\end_inset
+
+pi
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+Count1
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+Three8Nine
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Examples of 
+\series bold
+invalid
+\series default
+ identifiers are 
+\begin_inset Quotes eld
+\end_inset
+
+0times
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+The_END
+\begin_inset Quotes erd
+\end_inset
+
+, and 
+\begin_inset Quotes eld
+\end_inset
+
+const
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Remember that identifiers can not contain symbols or begin with a number.
+\end_layout
+
+\begin_layout Standard
+Once you have decided on a name for your constant, you can assign it a value.
+ This value will never change once it has been assigned, so it is important
+ to use constants only where the same value will be used repeatedly.
+ For instance, if you wished to approximate the area of a circle, you may
+ wish to define the constant 
+\begin_inset Quotes eld
+\end_inset
+
+pi
+\begin_inset Quotes erd
+\end_inset
+
+ with the value 3, to avoid mistakenly typing a different value for pi at
+ some point in your program.
+ Once you have decided on a name and value for a constant, you can declare
+ a constant with the syntax 
+\begin_inset Quotes eld
+\end_inset
+
+const [name] = [value];
+\begin_inset Quotes erd
+\end_inset
+
+, or 
+\begin_inset Quotes eld
+\end_inset
+
+const [name1] = [value1], [name2] = [value2], ...;
+\begin_inset Quotes erd
+\end_inset
+
+ to declare multiple constants.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+const x = 5; /* Declares a single constant */
+\end_layout
+
+\begin_layout Plain Layout
+
+const x = 5, y = 3; /* Declares two constants */
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Variable Declarations
+\end_layout
+
+\begin_layout Standard
+A variable is a place to store a value that can change throughout the program's
+ execution.
+ A variable must be named by a valid identifier in the same manner as a
+ constant.
+ Once a variable is declared, it will initially have the value 0.
+ During the program's execution variables can be changed to other values
+ using statements, discussed in section 2.6.
+ The syntax to declare a variable is the same as the syntax to declare a
+ constant, except that the 
+\begin_inset Quotes eld
+\end_inset
+
+const
+\begin_inset Quotes erd
+\end_inset
+
+ keyword has been replaced by 
+\begin_inset Quotes eld
+\end_inset
+
+int
+\begin_inset Quotes erd
+\end_inset
+
+, and the 
+\begin_inset Quotes eld
+\end_inset
+
+= [value]
+\begin_inset Quotes erd
+\end_inset
+
+ parts are omitted, because a value can not be specified in a variable declarati
+on.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+int x; /* Declares a single variable */
+\end_layout
+
+\begin_layout Plain Layout
+
+int x, y; /* Declares multiple variables */
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Procedure Declarations
+\end_layout
+
+\begin_layout Standard
+After declaring variables, you can define subprocedures.
+ A subprocedure is a section of code that can be executed multiple times
+ within your program.
+ Executing a subprocedure is referred to as 
+\begin_inset Quotes eld
+\end_inset
+
+calling
+\begin_inset Quotes erd
+\end_inset
+
+ it, and will be discussed in more detail in section 2.6.
+ The syntax to declare a procedure is as follows.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+procedure <identifier>;
+\end_layout
+
+\begin_layout Plain Layout
+
+[constant declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[variable declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[procedure declarations];
+\end_layout
+
+\begin_layout Plain Layout
+
+[statement];
+\end_layout
+
+\end_inset
+
+<identifier> can be any valid identifier used to name the procedure.
+ Constants and variables can be declared in a procedure in the same way
+ that they were declared before.
+ A constant or variable declared within a procedure is said to be 
+\begin_inset Quotes eld
+\end_inset
+
+local
+\begin_inset Quotes erd
+\end_inset
+
+ to that procedure, and it can only be accessed by that procedure or other
+ procedures contained within it.
+ Local procedures and variables will be discussed in section 2.6.
+\end_layout
+
+\begin_layout Standard
+Example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+/* Defines a procedure that doubles a variable named y */
+\end_layout
+
+\begin_layout Plain Layout
+
+procedure double; 
+\end_layout
+
+\begin_layout Plain Layout
+
+const x = 2;
+\end_layout
+
+\begin_layout Plain Layout
+
+	y := y * x;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Statements
+\end_layout
+
+\end_body
+\end_document
