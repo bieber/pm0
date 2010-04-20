@@ -1,4 +1,4 @@
-#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -1525,13 +1525,21 @@ int ans1;
 
  declares a new variable within the local scope of the procedure fact named
  ans1.
- The fourth line “snga’i” indicates that a statement section is about to
+ 
+\end_layout
+
+\begin_layout Standard
+The fourth line “snga’i” indicates that a statement section is about to
  follow.
  The fifth line “ans1 := n;” gives the value stored in n to the variable
  ans1.
  The sixth line “n := n-1;” subtracts one from the value of n and stores
  the result back in the variable n.
- The seventh line 
+ 
+\end_layout
+
+\begin_layout Standard
+The seventh line 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1572,7 +1580,11 @@ fpe';
 \end_inset
 
  signifies the end of the statement segment of code in the procedure fact.
- The eleventh line 
+ 
+\end_layout
+
+\begin_layout Standard
+The eleventh line 
 \begin_inset Quotes eld
 \end_inset
 
@@ -1803,7 +1815,11 @@ The above program is designed to show the nesting of procedures.
  be read in the exact same manner as a variable.
  The second line, "/* This is a comment */", is a comment and is completely
  ignored by the compiler.
- The third line, "int x, y, z, v, w;" is a declaration of many variables.
+ 
+\end_layout
+
+\begin_layout Standard
+The third line, "int x, y, z, v, w;" is a declaration of many variables.
  The fourth line, "procedure a;" is the declaration of the procedure named
  a and the code following it as the function.
  The fifth line, "int x, y, u, v;", declares four variables within the local
@@ -1811,11 +1827,19 @@ The above program is designed to show the nesting of procedures.
  a or any of the nested procedures within a, these three variables will
  override the variables declared in main first if they are within or within
  the parent of the function being currently executed).
- The sixth line, "procedure b;" simply declares the procedure b.
+ 
+\end_layout
+
+\begin_layout Standard
+The sixth line, "procedure b;" simply declares the procedure b.
  The seventh line, "int y, z, v;" declares these three variables within
  the local scope of procedure b (again note that y, z, and v will override
  any variables with the same name above their level if possible).
- The eighth line, "procedure c;" declares the procedure named c.
+ 
+\end_layout
+
+\begin_layout Standard
+The eighth line, "procedure c;" declares the procedure named c.
  The ninth line, "int y, z;" declares two variables with a local scope to
  the procedure c.
  The tenth line, "snga'i" declares the start of a segment of statement code.
@@ -1826,7 +1850,11 @@ The above program is designed to show the nesting of procedures.
  to x (in procedure a).
  The thirteenth line, "fpe';" signifies the end of the statement segment
  of procedure c.
- The fourteenth line, "snga'i" begins the statement segment of code that
+ 
+\end_layout
+
+\begin_layout Standard
+The fourteenth line, "snga'i" begins the statement segment of code that
  is part of procedure b.
  The fifteenth line, "y := x+u+w;", sums the values of x (in procedure a),
  u (in procedure a), and w (in the main section of code) and stores the
@@ -1834,7 +1862,11 @@ The above program is designed to show the nesting of procedures.
  The sixteenth line, "syaw c", calls and executes the procedure c.
  The seventeenth line, "fpe';" signifies the end of the statement segment
  of procedure b.
- The eighteenth line, "snga'i" begins the statement segment of procedure
+ 
+\end_layout
+
+\begin_layout Standard
+The eighteenth line, "snga'i" begins the statement segment of procedure
  a.
  The nineteenth line, "z := 2;" assigns 2 to the value of z (in the main
  section of code).
@@ -1845,7 +1877,11 @@ The above program is designed to show the nesting of procedures.
  b.
  The twenty-second line of code "fpe';", signifies the end of the statement
  segment of procedure a.
- The twenty-third line of code, "snga'i", begins the statement segment of
+ 
+\end_layout
+
+\begin_layout Standard
+The twenty-third line of code, "snga'i", begins the statement segment of
  the main code.
  The twenty-fourth line of code, "x := 1; y := 2; z := 3; v := 4; w := 5;"
  assigns the given values to their respective variables (at this point,
