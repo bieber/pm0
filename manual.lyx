@@ -1,4 +1,4 @@
-#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -1419,7 +1419,7 @@ status open
 
 \begin_layout Plain Layout
 
-int f, n; 
+int f, n;
 \end_layout
 
 \begin_layout Plain Layout
@@ -1449,7 +1449,7 @@ procedure fact;
 
 \begin_layout Plain Layout
 
-        txo n = 0 tsakrr f := 1;
+        txo n = 0 tsakrr f := 1 txokefyaw f := 2;
 \end_layout
 
 \begin_layout Plain Layout
@@ -1489,12 +1489,153 @@ snga'i
 
 \begin_layout Plain Layout
 
+	mi;
+\end_layout
+
+\begin_layout Plain Layout
+
+	wrrpa;
+\end_layout
+
+\begin_layout Plain Layout
+
 fpe'.
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+In the above example, the first line “int f, n;” declares two new variables,
+ f and n.
+ The second line “procedure fact;
+\begin_inset Quotes erd
+\end_inset
+
+ declares a new procedure named fact.
+ The third line 
+\begin_inset Quotes eld
+\end_inset
+
+int ans1;
+\begin_inset Quotes erd
+\end_inset
+
+ declares a new variable within the local scope of the procedure fact named
+ ans1.
+ The fourth line “snga’i” indicates that a statement section is about to
+ follow.
+ The fifth line “ans1 := n;” gives the value stored in n to the variable
+ ans1.
+ The sixth line “n := n-1;” subtracts one from the value of n and stores
+ the result back in the variable n.
+ The seventh line 
+\begin_inset Quotes eld
+\end_inset
+
+txo n = 0 tsakrr f := 1 txokefyaw f := 2;
+\begin_inset Quotes erd
+\end_inset
+
+ is an txo statement that checks the condition that n = 0 and if that condition
+ evaluates to true, sets the value of f to 1, otherwise sets the value of
+ f to 2.
+ The eighth line 
+\begin_inset Quotes eld
+\end_inset
+
+txo n > 0 tsakrr syaw fact;
+\begin_inset Quotes erd
+\end_inset
+
+ is another txo statement that checks to see if the value of n is greater
+ than zero and if it is, calls the procedure fact (this is an example of
+ very basic recursion).
+ The ninth line 
+\begin_inset Quotes eld
+\end_inset
+
+f := f*ans1;
+\begin_inset Quotes erd
+\end_inset
+
+ multiplies the value stored in the variable f by the value in the variable
+ ans1 and stores the result in f.
+ The tenth line 
+\begin_inset Quotes eld
+\end_inset
+
+fpe';
+\begin_inset Quotes erd
+\end_inset
+
+ signifies the end of the statement segment of code in the procedure fact.
+ The eleventh line 
+\begin_inset Quotes eld
+\end_inset
+
+snga'i
+\begin_inset Quotes erd
+\end_inset
+
+ indicates the start of a segment of multiple statements.
+ The twelfth line 
+\begin_inset Quotes eld
+\end_inset
+
+mi n;
+\begin_inset Quotes erd
+\end_inset
+
+ takes input from the user and stores the input value in the variable n.
+ The thirteenth line 
+\begin_inset Quotes eld
+\end_inset
+
+syaw fact;
+\begin_inset Quotes erd
+\end_inset
+
+ calls and executes the procedure fact.
+ The fourteenth line 
+\begin_inset Quotes eld
+\end_inset
+
+wrrpa f;
+\begin_inset Quotes erd
+\end_inset
+
+ outputs the value stored in the variable f to the screen.
+ The fifteenth line 
+\begin_inset Quotes eld
+\end_inset
+
+mi;
+\begin_inset Quotes erd
+\end_inset
+
+ takes user input and stores it on the top of the stack.
+ The sixteenth line 
+\begin_inset Quotes eld
+\end_inset
+
+wrrpa;
+\begin_inset Quotes erd
+\end_inset
+
+ outputs the value on the top of the stack to the screen.
+ The seventeenth line 
+\begin_inset Quotes eld
+\end_inset
+
+fpe'.
+\begin_inset Quotes erd
+\end_inset
+
+ signifies the end of the segment of statement code in the main program
+ block and the end of the program.
 \end_layout
 
 \begin_layout Section
@@ -1512,7 +1653,17 @@ status open
 
 \begin_layout Plain Layout
 
+const k = 3;
+\end_layout
+
+\begin_layout Plain Layout
+
 int x,y,z,v,w;
+\end_layout
+
+\begin_layout Plain Layout
+
+/* This is a comment */
 \end_layout
 
 \begin_layout Plain Layout
@@ -1643,6 +1794,71 @@ fpe'.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+The above program is designed to show the nesting of procedures.
+ The first line, "const k = 3;" defines a constant named k that is given
+ the value 3 and cannot be changed at any point in the program, but can
+ be read in the exact same manner as a variable.
+ The second line, "/* This is a comment */", is a comment and is completely
+ ignored by the compiler.
+ The third line, "int x, y, z, v, w;" is a declaration of many variables.
+ The fourth line, "procedure a;" is the declaration of the procedure named
+ a and the code following it as the function.
+ The fifth line, "int x, y, u, v;", declares four variables within the local
+ scope of the procedure a (note that if x, y, or v is called by procedure
+ a or any of the nested procedures within a, these three variables will
+ override the variables declared in main first if they are within or within
+ the parent of the function being currently executed).
+ The sixth line, "procedure b;" simply declares the procedure b.
+ The seventh line, "int y, z, v;" declares these three variables within
+ the local scope of procedure b (again note that y, z, and v will override
+ any variables with the same name above their level if possible).
+ The eighth line, "procedure c;" declares the procedure named c.
+ The ninth line, "int y, z;" declares two variables with a local scope to
+ the procedure c.
+ The tenth line, "snga'i" declares the start of a segment of statement code.
+ The eleventh line, "z := 1;" assigns the value 1 to the variable z (which
+ is the variable declared within procedure c).
+ The twelfth line, "x := y+z+w", sums the variables y (in procedure c),
+ z (in procedure c), and w (in the main section of code) and assigns them
+ to x (in procedure a).
+ The thirteenth line, "fpe';" signifies the end of the statement segment
+ of procedure c.
+ The fourteenth line, "snga'i" begins the statement segment of code that
+ is part of procedure b.
+ The fifteenth line, "y := x+u+w;", sums the values of x (in procedure a),
+ u (in procedure a), and w (in the main section of code) and stores the
+ value in y (in procedure b).
+ The sixteenth line, "syaw c", calls and executes the procedure c.
+ The seventeenth line, "fpe';" signifies the end of the statement segment
+ of procedure b.
+ The eighteenth line, "snga'i" begins the statement segment of procedure
+ a.
+ The nineteenth line, "z := 2;" assigns 2 to the value of z (in the main
+ section of code).
+ The twentieth line, "u := z+w;", sums the values of z (in the main section
+ of code) and w (also in the main section of code) and stores the result
+ in the variable u (in procedure a).
+ The twenty-first line of code, "syaw b", calls and executes the procedure
+ b.
+ The twenty-second line of code "fpe';", signifies the end of the statement
+ segment of procedure a.
+ The twenty-third line of code, "snga'i", begins the statement segment of
+ the main code.
+ The twenty-fourth line of code, "x := 1; y := 2; z := 3; v := 4; w := 5;"
+ assigns the given values to their respective variables (at this point,
+ all variables used are strictly in the scope of the main code, or in a
+ sense, the entire program).
+ The twenty-fifth line of code, "x := v+w;", sums the variables v and w
+ and stores them in the variable x.
+ The twenty-sixth line of code, "wrrpa z;" displays the value of the variable
+ z to the screen.
+ The twenty-seventh line of code, "syaw a;" calls and executes the procedure
+ a.
+ The twenty-eighth and final line of code, "fpe'." signifies the end of the
+ statement segment in the main section of code and the end of the program.
 \end_layout
 
 \end_body
