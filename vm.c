@@ -162,6 +162,7 @@ int execOp(int* sp, int* bp, int* pc, instruction ir, instruction code[],
     case RET:
       if(*bp == 1) //Kill the simulation if we're at the base level
         return 0;
+      arlist[--(*arcntr)] = 0;
       *sp = *bp - 1;
       *pc = stack[*sp+3];
       *bp = stack[*sp+2];
